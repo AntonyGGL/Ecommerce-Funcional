@@ -1,72 +1,154 @@
-# Impofer E-Commerce Platform
+<div align="center">
 
-Backend and static frontend for an industrial hardware and supplies store, built with Spring Boot, PostgreSQL, JWT-based authentication, and administrative modules for catalog, orders, customers, quotations, and claims management.
+# 🛒 Impofer — Plataforma de Comercio Electrónico
 
-## Overview
+**Backend y frontend estático para una tienda de ferretería industrial y suministros**
 
-This repository contains a production-oriented commerce application with:
+[![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java)](https://www.java.com)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.2-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?style=for-the-badge&logo=postgresql)](https://www.postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-Deployment-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com)
+[![JWT](https://img.shields.io/badge/JWT-Security-black?style=for-the-badge&logo=jsonwebtokens)](https://jwt.io)
 
-- Spring Boot 4 and Java 17
-- PostgreSQL with Flyway migrations
-- JWT authentication and role-based access control
-- Static storefront and admin interfaces served by the application
-- Email support for account recovery flows
-- Docker and reverse proxy deployment assets
+</div>
 
-## Main Capabilities
+---
 
-- Product catalog and category browsing
-- Customer registration and login
-- Order management and order history
-- Administrative dashboards for inventory, clients, orders, quotations, and claims
-- Health and monitoring endpoints through Spring Boot Actuator
+## 📋 Descripción General
 
-## Technology Stack
+Este repositorio contiene una aplicación de comercio electrónico orientada a producción para la venta de suministros industriales. Incluye tanto el backend REST como las interfaces de usuario estáticas del catálogo, panel administrativo y proceso de compra.
 
-- Java 17
-- Spring Boot 4.0.2
-- Spring Web, Spring Security, Spring Data JPA, Spring Validation
-- PostgreSQL
-- Flyway
-- Maven
-- Docker and Nginx
+**Características principales del proyecto:**
 
-## Local Run
+- 🚀 **Spring Boot 4** con **Java 17**
+- 🗄️ **PostgreSQL** con migraciones gestionadas por **Flyway**
+- 🔐 **Autenticación JWT** y control de acceso basado en roles
+- 🌐 Tienda en línea y panel de administración servidos por la aplicación
+- 📧 Soporte de correo electrónico para recuperación de contraseñas
+- 🐳 Archivos de despliegue con **Docker** y proxy inverso **Nginx**
 
-1. Copy `.env.example` to `.env` and fill in your own values.
-2. Ensure PostgreSQL is available and the target database exists.
-3. Start the application:
+---
 
+## ⚡ Funcionalidades Principales
+
+| Módulo | Descripción |
+|--------|-------------|
+| 🛍️ **Catálogo** | Navegación de productos por categorías |
+| 👤 **Clientes** | Registro, inicio de sesión y perfil de usuario |
+| 📦 **Pedidos** | Gestión de órdenes e historial de compras |
+| 🗂️ **Inventario** | Panel administrativo de productos y stock |
+| 💬 **Cotizaciones** | Solicitud y gestión de cotizaciones |
+| 📝 **Reclamaciones** | Registro y seguimiento de reclamos |
+| 📊 **Monitoreo** | Endpoints de salud vía Spring Boot Actuator |
+
+---
+
+## 🛠️ Stack Tecnológico
+
+<div align="center">
+
+| Tecnología | Versión | Uso |
+|-----------|---------|-----|
+| Java | 17 | Lenguaje principal |
+| Spring Boot | 4.0.2 | Framework backend |
+| Spring Security | — | Seguridad y autenticación |
+| Spring Data JPA | — | Acceso a datos |
+| PostgreSQL | — | Base de datos relacional |
+| Flyway | — | Migraciones de base de datos |
+| Maven | — | Gestor de dependencias |
+| Docker + Nginx | — | Contenedorización y proxy inverso |
+
+</div>
+
+---
+
+## 🚀 Ejecución Local
+
+### Requisitos previos
+- Java 17+
+- PostgreSQL en ejecución con la base de datos creada
+- Maven (o usar el wrapper incluido)
+
+### Pasos
+
+**1. Configurar variables de entorno**
 ```bash
-./mvnw spring-boot:run
+cp .env.example .env
+# Editar .env con tus propios valores
 ```
 
-On Windows:
+**2. Iniciar la aplicación**
 
-```powershell
+```bash
+# Linux / macOS
+./mvnw spring-boot:run
+
+# Windows
 .\mvnw.cmd spring-boot:run
 ```
 
-The application is exposed by default at `http://localhost:8080`.
+**3. Acceder a la aplicación**
 
-## Security Notes
+```
+http://localhost:8080
+```
 
-- No runtime secrets should be committed to this repository.
-- Use environment variables or a secrets manager for database, JWT, SMTP, and payment credentials.
-- Example values in `.env.example` are placeholders only.
+---
 
-## Deployment
+## 🔒 Consideraciones de Seguridad
 
-The repository includes deployment artifacts for container-based environments:
+> ⚠️ **Importante:** No incluir credenciales reales en este repositorio.
 
-- `Dockerfile`
-- `docker-compose.yml`
-- `nginx/nginx.conf`
+- Utilizar variables de entorno o un gestor de secretos para credenciales de base de datos, JWT, SMTP y pagos.
+- Los valores en `.env.example` son únicamente de referencia y no contienen datos reales.
+- Las claves sensibles deben inyectarse en tiempo de despliegue.
 
-Review the deployment guides before publishing to production and inject secrets at deploy time.
+---
 
-## Repository Description
+## 🐳 Despliegue con Docker
 
-Suggested GitHub description:
+El repositorio incluye todos los artefactos necesarios para despliegue en contenedores:
 
-`Spring Boot e-commerce platform for industrial supplies with JWT security, PostgreSQL, Flyway migrations, admin modules, and Docker deployment support.`
+```
+📁 Raíz del proyecto
+├── 🐳 Dockerfile
+├── 🐳 docker-compose.yml
+└── 📁 nginx/
+    └── nginx.conf
+```
+
+```bash
+# Construir y levantar los servicios
+docker-compose up --build
+```
+
+> Revisar las guías de despliegue incluidas antes de publicar en producción e inyectar los secretos en tiempo de ejecución.
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── main/
+│   ├── java/com/example/demo/
+│   │   ├── config/        # Configuración de seguridad y CORS
+│   │   ├── controller/    # Controladores REST
+│   │   ├── dto/           # Objetos de transferencia de datos
+│   │   ├── model/         # Entidades JPA
+│   │   ├── repository/    # Repositorios Spring Data
+│   │   ├── security/      # Proveedor JWT y filtros
+│   │   └── service/       # Lógica de negocio
+│   └── resources/
+│       ├── static/        # Frontend HTML/CSS/JS
+│       └── db/migration/  # Scripts Flyway (V1–V9)
+└── test/                  # Pruebas unitarias e integración
+```
+
+---
+
+<div align="center">
+
+Desarrollado con ❤️ · **Impofer** · 2025
+
+</div>
