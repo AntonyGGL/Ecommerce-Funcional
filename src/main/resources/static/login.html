@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Pro | Impofer</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#0f172a',
+                            dark: '#1e293b',
+                            accent: '#f97316',
+                            light: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans h-screen overflow-hidden flex">
+
+    <div class="hidden lg:flex lg:w-1/2 relative bg-brand-dark items-end p-16">
+        <div class="absolute inset-0 z-0">
+            <img src="/hero-bg.jpg" 
+                 class="w-full h-full object-cover opacity-80">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent z-10"></div>
+        
+        <!-- Contenido eliminado a petición del usuario -->
+    </div>
+
+    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 relative bg-brand-black">
+        
+        <a href="index.html" class="absolute top-8 left-8 flex items-center gap-2 text-slate-400 hover:text-white transition text-sm font-semibold">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver a la tienda
+        </a>
+
+        <!-- Seccion de Login -->
+        <div id="login-section" class="w-full max-w-md space-y-8">
+            <div class="text-center">
+                <div class="flex justify-center items-center gap-2 mb-2">
+                    <i data-lucide="hexagon" class="text-brand-accent h-8 w-8 fill-brand-accent/20"></i>
+                    <span class="font-bold text-2xl tracking-tight">IMPOFER<span class="text-brand-accent">.</span></span>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Bienvenido, Pro.</h2>
+                <p class="text-slate-400 text-sm mt-2">Ingresa tus credenciales para gestionar tus pedidos.</p>
+            </div>
+
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label for="email" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Email</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="mail" class="h-5 w-5 text-slate-500 group-focus-within:text-brand-accent transition-colors"></i>
+                        </div>
+                        <input type="email" id="email" required class="bg-brand-dark block w-full pl-10 pr-3 py-3 border border-white/10 rounded-lg placeholder-slate-500 text-white focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all sm:text-sm" placeholder="tu@email.com">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="password" class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Contraseña</label>
+                        <button type="button" onclick="showForgotPassword()" class="text-xs text-brand-accent hover:text-orange-400 font-semibold">¿Olvidaste tu contraseña?</button>
+                    </div>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="lock" class="h-5 w-5 text-slate-500 group-focus-within:text-brand-accent transition-colors"></i>
+                        </div>
+                        <input type="password" id="password" required class="bg-brand-dark block w-full pl-10 pr-10 py-3 border border-white/10 rounded-lg placeholder-slate-500 text-white focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all sm:text-sm" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg shadow-orange-500/20 text-sm font-bold text-white bg-brand-accent hover:bg-orange-600 focus:outline-none transition-all transform hover:scale-[1.02]">
+                    Ingresar
+                </button>
+            </form>
+
+            <p class="text-center text-sm text-slate-400">
+                ¿No tienes cuenta? 
+                <button onclick="showRegister()" class="font-bold text-brand-accent hover:text-orange-400 transition">Crear cuenta</button>
+            </p>
+        </div>
+
+        <!-- Seccion de Registro (Oculta por defecto) -->
+        <div id="register-section" class="w-full max-w-md space-y-6 hidden">
+            <div class="text-center">
+                <div class="flex justify-center items-center gap-2 mb-2">
+                    <i data-lucide="hexagon" class="text-brand-accent h-8 w-8 fill-brand-accent/20"></i>
+                    <span class="font-bold text-2xl tracking-tight">IMPOFER<span class="text-brand-accent">.</span></span>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Únete al Club Pro</h2>
+                <p class="text-slate-400 text-sm mt-2">Crea tu cuenta corporativa hoy mismo.</p>
+            </div>
+
+            <form id="registerForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Nombre</label>
+                        <input type="text" id="reg-firstName" required class="bg-brand-dark block w-full px-4 py-2.5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-brand-accent transition-all text-sm" placeholder="Antony">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Apellido</label>
+                        <input type="text" id="reg-lastName" required class="bg-brand-dark block w-full px-4 py-2.5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-brand-accent transition-all text-sm" placeholder="Díaz">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Email</label>
+                    <input type="email" id="reg-email" required class="bg-brand-dark block w-full px-4 py-2.5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-brand-accent transition-all text-sm" placeholder="tu@email.com">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Contraseña</label>
+                    <input type="password" id="reg-password" required minlength="6" class="bg-brand-dark block w-full px-4 py-2.5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-brand-accent transition-all text-sm" placeholder="••••••••">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Empresa</label>
+                    <input type="text" id="reg-company" class="bg-brand-dark block w-full px-4 py-2.5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-brand-accent transition-all text-sm" placeholder="Constructora X">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 rounded-lg text-sm font-bold text-white bg-brand-accent hover:bg-orange-600 transition-all transform hover:scale-[1.02]">
+                        Registrarme
+                    </button>
+                </div>
+            </form>
+
+            <p class="text-center text-sm text-slate-400">
+                ¿Ya tienes cuenta? 
+                <button type="button" onclick="showLogin()" class="font-bold text-brand-accent hover:text-orange-400 transition">Iniciar Sesión</button>
+            </p>
+        </div>
+
+        <!-- Seccion de Recuperacion de Contraseña -->
+        <div id="forgot-password-section" class="w-full max-w-md space-y-6 hidden">
+            <div class="text-center">
+                <div class="flex justify-center items-center gap-2 mb-2">
+                    <i data-lucide="hexagon" class="text-brand-accent h-8 w-8 fill-brand-accent/20"></i>
+                    <span class="font-bold text-2xl tracking-tight">IMPOFER<span class="text-brand-accent">.</span></span>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Recuperar Contraseña</h2>
+                <p class="text-slate-400 text-sm mt-2">Ingresa tu correo para recibir un enlace de recuperación.</p>
+            </div>
+
+            <form id="forgotPasswordForm" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Email</label>
+                    <input type="email" id="forgot-email" required class="bg-brand-dark block w-full px-4 py-2.5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-brand-accent transition-all text-sm" placeholder="tu@email.com">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 rounded-lg text-sm font-bold text-white bg-brand-accent hover:bg-orange-600 transition-all transform hover:scale-[1.02]">
+                        Enviar Enlace
+                    </button>
+                </div>
+            </form>
+
+            <p class="text-center text-sm text-slate-400">
+                <button type="button" onclick="showLogin()" class="font-bold text-brand-accent hover:text-orange-400 transition">Volver al Inicio de Sesión</button>
+            </p>
+        </div>
+        
+        <div class="absolute bottom-6 text-xs text-slate-600">
+            © 2024 Impofer S.A. Privacidad y Términos.
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Show session expired banner if redirected from a protected page
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('session') === 'expired') {
+            const banner = document.createElement('div');
+            banner.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-orange-500/20 border border-orange-500/40 text-orange-300 text-sm font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center gap-2';
+            banner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Tu sesión expiró. Por favor inicia sesión nuevamente.';
+            document.body.appendChild(banner);
+            setTimeout(() => banner.remove(), 6000);
+        }
+
+        function showRegister() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('forgot-password-section').classList.add('hidden');
+            document.getElementById('register-section').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('forgot-password-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+        }
+
+        function showForgotPassword() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('forgot-password-section').classList.remove('hidden');
+        }
+
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            
+            try {
+                const response = await fetch(`/api/auth/forgot-password?email=${encodeURIComponent(email)}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    showLogin();
+                } else {
+                    alert(data.error || 'Ocurrió un error. Por favor intenta más tarde.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al conectar con el servidor');
+            }
+        });
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('userName', data.firstName);
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('userEmail', data.email);
+                    if (data.role === 'ADMIN') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert('Credenciales inválidas');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al conectar con el servidor');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userData = {
+                firstName: document.getElementById('reg-firstName').value || "Cliente",
+                lastName: document.getElementById('reg-lastName').value || "Anonimo",
+                email: document.getElementById('reg-email').value,
+                password: document.getElementById('reg-password').value,
+                company: document.getElementById('reg-company').value || "",
+                role: 'CUSTOMER'
+            };
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('userName', data.firstName);
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('userEmail', data.email);
+                    alert('¡Cuenta creada con éxito! Bienvenido.');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Error en el registro. Es posible que el email ya esté en uso.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al conectar con el servidor');
+            }
+        });
+    </script>
+</body>
+</html>

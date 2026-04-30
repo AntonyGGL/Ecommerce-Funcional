@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizaciones | Impofer Admin</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0f172a',
+                            dark: '#1e293b',
+                            card: '#1e293b',
+                            accent: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-brand-dark border-r border-white/5 hidden md:flex flex-col">
+        <div class="h-20 flex items-center px-6 border-b border-white/5 font-bold text-brand-accent tracking-tighter text-xl">
+            IMPOFER <span class="text-white ml-2 text-xs font-normal border border-white/20 px-1 rounded">ADMIN</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+            </a>
+            <a href="orders-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i> Pedidos
+            </a>
+            <a href="clients-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="users" class="w-5 h-5"></i> Clientes
+            </a>
+            <a href="inventory-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="package" class="w-5 h-5"></i> Productos
+            </a>
+            <a href="reclamaciones-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="book-open" class="w-5 h-5"></i> Reclamaciones
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-accent/10 text-brand-accent rounded-lg transition-colors font-bold">
+                <i data-lucide="file-text" class="w-5 h-5"></i> Cotizaciones
+            </a>
+            <div class="pt-8 space-y-2">
+                <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-400/10 w-full rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Cerrar Sesión
+                </button>
+                <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors border border-white/5 mx-0">
+                    <i data-lucide="external-link" class="w-5 h-5"></i> Ir a la tienda
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="h-20 bg-brand-black/90 border-b border-white/5 flex justify-between items-center px-8">
+            <h1 class="text-xl font-bold">Cotizaciones</h1>
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 text-xs text-slate-400 cursor-pointer select-none">
+                    <input type="checkbox" id="showIgnored" onchange="renderTable()" class="w-4 h-4 accent-orange-500">
+                    Mostrar ignoradas
+                </label>
+                <span class="text-xs text-slate-500 font-bold uppercase" id="cot-count">-- cotizaciones</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 bg-brand-black">
+            <div class="bg-brand-card rounded-xl border border-white/5 overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-400">
+                        <thead class="bg-white/5 text-[10px] uppercase font-bold text-slate-500 border-b border-white/5">
+                            <tr>
+                                <th class="px-4 py-3">Código</th>
+                                <th class="px-4 py-3">Cliente</th>
+                                <th class="px-4 py-3">Productos</th>
+                                <th class="px-4 py-3">Total Est.</th>
+                                <th class="px-4 py-3">Fecha</th>
+                                <th class="px-4 py-3">Estado</th>
+                                <th class="px-4 py-3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cotTable" class="divide-y divide-white/5"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="hidden p-16 text-center text-slate-500">
+                    <i data-lucide="file-text" class="w-12 h-12 mx-auto mb-4 opacity-20"></i>
+                    <p class="font-bold">No hay cotizaciones pendientes</p>
+                    <p class="text-xs mt-1">Cuando los clientes envíen cotizaciones por WhatsApp, aparecerán aquí.</p>
+                </div>
+                <div id="loadingState" class="p-16 text-center text-slate-500">
+                    <p class="text-xs animate-pulse">Cargando cotizaciones...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-dark border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="modalTitle">Detalle de Cotización</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto" id="modalBody"></div>
+            <div class="p-6 border-t border-white/5 flex gap-3 justify-end" id="modalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        var allCotizaciones = [];
+        var token = localStorage.getItem('token');
+
+        if (!token) { window.location.href = 'login.html'; }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            window.location.href = 'login.html';
+        }
+
+        async function loadCotizaciones() {
+            try {
+                var resp = await fetch('/api/admin/cotizaciones', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (resp.status === 401 || resp.status === 403) { window.location.href = 'login.html'; return; }
+                allCotizaciones = await resp.json();
+                document.getElementById('loadingState').classList.add('hidden');
+                renderTable();
+            } catch (e) {
+                document.getElementById('loadingState').innerHTML = '<p class="text-red-400 text-xs">Error al cargar cotizaciones.</p>';
+            }
+        }
+
+        function renderTable() {
+            var showIgnored = document.getElementById('showIgnored').checked;
+            var visible = allCotizaciones.filter(function(c) {
+                return showIgnored ? true : c.status !== 'IGNORED';
+            });
+            var tbody = document.getElementById('cotTable');
+            var empty = document.getElementById('emptyState');
+            document.getElementById('cot-count').textContent = visible.length + ' cotizaciones';
+
+            if (visible.length === 0) {
+                tbody.innerHTML = '';
+                empty.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+            empty.classList.add('hidden');
+
+            tbody.innerHTML = visible.map(function(c) {
+                var isPending = c.status === 'COTIZACION';
+                var code = c.cotizacionCode || ('#ORD-' + c.id);
+                var date = c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-PE', { day:'2-digit', month:'short', year:'numeric' }) : '-';
+                var customer = c.customer ? c.customer.name : 'Desconocido';
+                var email    = c.customer ? c.customer.email : '';
+                var total    = c.total != null ? 'S/ ' + parseFloat(c.total).toFixed(2) : '-';
+                var itemCount = c.items ? c.items.length : 0;
+                var statusBadge = isPending
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">En revisión</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20">Ignorada</span>';
+                var actions = isPending
+                    ? '<button onclick="confirmar(' + c.id + ')" class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-lg hover:bg-emerald-500/30 transition">Confirmar</button>' +
+                      '<button onclick="ignorar(' + c.id + ')" class="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold rounded-lg hover:bg-red-500/30 transition">Ignorar</button>'
+                    : '<span class="text-slate-600 text-xs">—</span>';
+                return '<tr class="hover:bg-white/5 cursor-pointer ' + (isPending ? '' : 'opacity-50') + '">' +
+                    '<td class="px-4 py-3 font-mono text-xs font-bold text-white" onclick="showDetail(' + c.id + ')">' + code + '</td>' +
+                    '<td class="px-4 py-3" onclick="showDetail(' + c.id + ')">' +
+                        '<p class="text-white font-semibold text-xs">' + customer + '</p>' +
+                        '<p class="text-[10px] text-slate-500">' + email + '</p>' +
+                    '</td>' +
+                    '<td class="px-4 py-3 text-xs" onclick="showDetail(' + c.id + ')">' + itemCount + ' producto(s)</td>' +
+                    '<td class="px-4 py-3 font-bold text-white text-xs" onclick="showDetail(' + c.id + ')">' + total + '</td>' +
+                    '<td class="px-4 py-3 text-xs" onclick="showDetail(' + c.id + ')">' + date + '</td>' +
+                    '<td class="px-4 py-3">' + statusBadge + '</td>' +
+                    '<td class="px-4 py-3"><div class="flex gap-2">' + actions + '</div></td>' +
+                '</tr>';
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function showDetail(id) {
+            var c = allCotizaciones.find(function(x) { return x.id === id; });
+            if (!c) return;
+            var code = c.cotizacionCode || ('#ORD-' + c.id);
+            var date = c.createdAt ? new Date(c.createdAt).toLocaleString('es-PE') : '-';
+            var customer = c.customer ? c.customer.name : 'Desconocido';
+            var email    = c.customer ? c.customer.email : '';
+            var addr     = c.shippingAddress || '-';
+            var notes    = c.notes || '-';
+            var total    = c.total != null ? 'S/ ' + parseFloat(c.total).toFixed(2) : '-';
+            var isPending = c.status === 'COTIZACION';
+
+            document.getElementById('modalTitle').textContent = 'Cotización ' + code;
+            document.getElementById('modalBody').innerHTML =
+                '<div class="grid grid-cols-2 gap-3 text-xs">' +
+                    '<div><p class="text-slate-500 uppercase font-bold text-[10px]">Cliente</p><p class="text-white mt-1">' + customer + '</p><p class="text-slate-400">' + email + '</p></div>' +
+                    '<div><p class="text-slate-500 uppercase font-bold text-[10px]">Fecha</p><p class="text-white mt-1">' + date + '</p></div>' +
+                    '<div class="col-span-2"><p class="text-slate-500 uppercase font-bold text-[10px]">Dirección / Entrega</p><p class="text-white mt-1">' + addr + '</p></div>' +
+                    '<div class="col-span-2"><p class="text-slate-500 uppercase font-bold text-[10px]">Notas</p><p class="text-white mt-1">' + notes + '</p></div>' +
+                '</div>' +
+                '<div class="mt-4">' +
+                    '<p class="text-slate-500 uppercase font-bold text-[10px] mb-2">Productos</p>' +
+                    '<div class="space-y-2">' +
+                    (c.items || []).map(function(item) {
+                        return '<div class="flex justify-between text-xs bg-white/5 rounded-lg px-3 py-2">' +
+                            '<span class="text-white">' + item.productName + ' <span class="text-slate-500">×' + item.quantity + '</span></span>' +
+                            '<span class="font-bold text-white">S/ ' + parseFloat(item.subtotal || 0).toFixed(2) + '</span>' +
+                        '</div>';
+                    }).join('') +
+                    '</div>' +
+                    '<div class="flex justify-between text-sm font-bold mt-3 border-t border-white/10 pt-3">' +
+                        '<span class="text-slate-400">Total estimado</span>' +
+                        '<span class="text-white">' + total + '</span>' +
+                    '</div>' +
+                '</div>';
+
+            var actionsEl = document.getElementById('modalActions');
+            actionsEl.innerHTML = isPending
+                ? '<button onclick="ignorar(' + c.id + ');closeModal()" class="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 text-sm font-bold rounded-lg hover:bg-red-500/30 transition">Ignorar</button>' +
+                  '<button onclick="confirmar(' + c.id + ');closeModal()" class="px-4 py-2 bg-emerald-500 text-white text-sm font-bold rounded-lg hover:bg-emerald-600 transition">Confirmar pedido</button>'
+                : '<button onclick="closeModal()" class="px-4 py-2 bg-white/10 text-slate-300 text-sm rounded-lg hover:bg-white/20 transition">Cerrar</button>';
+
+            document.getElementById('detailModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        async function confirmar(id) {
+            if (!confirm('¿Confirmar esta cotización? Se creará como pedido pendiente.')) return;
+            try {
+                var resp = await fetch('/api/admin/cotizaciones/' + id + '/confirmar', {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (resp.ok) {
+                    allCotizaciones = allCotizaciones.filter(function(c) { return c.id !== id; });
+                    renderTable();
+                    alert('✅ Cotización confirmada. El pedido ya aparece en la sección Pedidos.');
+                } else {
+                    alert('Error al confirmar la cotización.');
+                }
+            } catch(e) { alert('Error de conexión.'); }
+        }
+
+        async function ignorar(id) {
+            if (!confirm('¿Ignorar esta cotización? El cliente no recibirá ninguna notificación.')) return;
+            try {
+                var resp = await fetch('/api/admin/cotizaciones/' + id + '/ignorar', {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (resp.ok) {
+                    var idx = allCotizaciones.findIndex(function(c) { return c.id === id; });
+                    if (idx !== -1) allCotizaciones[idx].status = 'IGNORED';
+                    renderTable();
+                } else {
+                    alert('Error al ignorar la cotización.');
+                }
+            } catch(e) { alert('Error de conexión.'); }
+        }
+
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            loadCotizaciones();
+        });
+    </script>
+</body>
+</html>

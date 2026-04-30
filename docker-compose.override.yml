@@ -1,0 +1,6 @@
+# Override para exponer el puerto 8080 directamente (sin Nginx/SSL)
+# Usar con: docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+services:
+  app:
+    ports:
+      - "8080:8080"

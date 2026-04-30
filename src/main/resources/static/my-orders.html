@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos | Impofer</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0f172a',
+                            dark: '#1e293b',
+                            card: '#1e293b',
+                            accent: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans flex flex-col min-h-screen">
+
+    <nav class="bg-brand-black/95 border-b border-white/5 py-6">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="font-bold text-2xl tracking-tight flex items-center gap-2">
+                <i data-lucide="hexagon" class="text-brand-accent h-8 w-8"></i>
+                IMPOFER<span class="text-brand-accent">.</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <span id="user-name" class="text-sm font-medium text-slate-400 font-bold">--</span>
+                <button onclick="logout()" class="text-xs text-red-500 hover:text-red-400 font-bold uppercase tracking-widest border border-red-500/20 px-3 py-1 rounded">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-5xl mx-auto w-full p-6 md:p-12">
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tighter">Mis Pedidos</h1>
+                <p class="text-slate-500">Historial y estado de tus compras</p>
+            </div>
+            <a href="index.html" class="flex items-center gap-2 text-brand-accent font-bold hover:underline transition">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver a la tienda
+            </a>
+        </div>
+
+        <div id="orders-container" class="space-y-6">
+            <!-- Cargando -->
+            <div class="text-center py-20">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-4"></div>
+                <p class="text-slate-500">Cargando tus pedidos...</p>
+            </div>
+        </div>
+
+        <!-- Mis Reclamaciones -->
+        <div class="mt-14 hidden" id="section-reclamaciones">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-extrabold tracking-tighter">Mis Reclamaciones</h2>
+                    <p class="text-slate-500">Estado de tus reclamos y quejas registrados</p>
+                </div>
+            </div>
+            <div id="reclamaciones-container" class="space-y-4"></div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+            document.getElementById('user-name').textContent = localStorage.getItem('userName');
+        }
+        checkAuth();
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        async function loadUserOrders() {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+            
+            console.log('🔍 DEBUG INFO:');
+            console.log('Token stored:', token ? '✓ ' + token.substring(0, 20) + '...' : '✗ NO TOKEN');
+            console.log('UserId stored:', userId);
+            
+            try {
+                console.log(`📡 Fetching: /api/orders/user/${userId}`);
+                const response = await fetch(`/api/orders/user/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                console.log(`📊 Response Status: ${response.status} ${response.statusText}`);
+                
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'login.html?session=expired';
+                    return;
+                }
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ Server Error Response:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+                }
+                
+                const orders = await response.json();
+                console.log('✅ Orders loaded:', orders);
+                renderOrders(orders);
+            } catch (error) {
+                console.error('❌ Full Error:', error);
+                document.getElementById('orders-container').innerHTML = `
+                    <div class="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl text-center">
+                        <i data-lucide="alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4"></i>
+                        <p class="text-red-400">No pudimos cargar tus pedidos en este momento.</p>
+                        <p class="text-red-500 text-xs mt-4 font-mono">${error.message}</p>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('orders-container');
+            const visible = orders.filter(o => o.status !== 'IGNORED');
+            
+            if (visible.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white/5 border border-white/10 p-20 rounded-2xl text-center">
+                        <i data-lucide="shopping-bag" class="w-16 h-16 text-slate-700 mx-auto mb-6"></i>
+                        <h3 class="text-xl font-bold mb-2">Aún no tienes pedidos</h3>
+                        <p class="text-slate-500 mb-8">¡Explora nuestro catálogo y realiza tu primera compra!</p>
+                        <a href="index.html" class="bg-brand-accent text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-600 transition inline-block">Ver Productos</a>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = visible.map(order => {
+                // Cotizacion pending admin review
+                if (order.status === 'COTIZACION') {
+                    const code = order.cotizacionCode || ('#COT-' + order.id);
+                    const date = new Date(order.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                    const productList = order.orderDetails?.map(d => d.product?.name || 'Producto').join(', ') || 'Varios productos';
+                    const total = parseFloat(order.total || 0).toFixed(2);
+                    return `
+                    <div class="bg-brand-dark border border-blue-500/20 rounded-2xl overflow-hidden shadow-xl">
+                        <div class="p-6 border-b border-white/5 flex flex-wrap justify-between items-center gap-4 bg-blue-500/5">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-blue-500/20 p-3 rounded-xl">
+                                    <i data-lucide="file-text" class="text-blue-400 w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-lg">${code}</h4>
+                                    <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">${date}</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-blue-500/10 text-blue-400 border-blue-500/20">
+                                Cotizaci\u00f3n en Revisi\u00f3n
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 space-y-2">
+                                <p class="text-sm text-slate-300"><span class="text-slate-500 mr-2">Productos:</span>${productList}</p>
+                                <p class="text-sm text-slate-300"><span class="text-slate-500 mr-2">Total estimado:</span><span class="text-white font-bold">S/ ${total}</span></p>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4 leading-relaxed">\uD83D\uDD14 Tu cotizaci\u00f3n est\u00e1 siendo revisada por nuestro equipo. Un asesor te contactar\u00e1 pronto por WhatsApp para confirmar disponibilidad, precio final y coordinar el pago.</p>
+                        </div>
+                    </div>
+                    `;
+                }
+
+                const date = new Date(order.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                const isDelivered = order.shippingStatus === 'DELIVERED';
+                const isPickup = (order.shippingAddress || '').toLowerCase().includes('recojo');
+                
+                // Texto para WhatsApp
+                const productList = order.orderDetails?.map(d => d.product.name).join(', ') || 'Productos varios';
+                const whatsappMsg = encodeURIComponent(`Hola, mi pedido no llegó. ID: #ORD-${order.id}. Productos: ${productList}. Fecha de compra: ${date}.`);
+                const whatsappUrl = `https://wa.me/51912112268?text=${whatsappMsg}`;
+
+                let statusActionHtml = '';
+                if (isDelivered) {
+                    statusActionHtml = `
+                        <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center">
+                            <p class="text-green-500 text-sm font-bold flex items-center justify-center gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Pedido Entregado
+                            </p>
+                        </div>
+                    `;
+                } else if (isPickup && order.shippingStatus === 'AWAITING_PICKUP') {
+                    statusActionHtml = `
+                        <div class="space-y-3">
+                            <div class="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 text-center">
+                                <p class="text-orange-500 text-xs font-bold uppercase tracking-wider mb-1">Tu pedido está listo</p>
+                                <p class="text-white text-sm font-bold flex items-center justify-center gap-2">
+                                    <i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i> Acércate a recogerlo
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                } else if (isPickup && order.shippingStatus === 'PENDING') {
+                    statusActionHtml = `
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
+                            <div class="animate-pulse flex flex-col items-center">
+                                <i data-lucide="clock" class="text-slate-500 w-8 h-8 mb-3"></i>
+                                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest leading-tight">Preparando tu pedido<br><span class="text-[10px] text-slate-600 font-medium">Te avisaremos cuando esté listo para recoger</span></p>
+                            </div>
+                        </div>
+                    `;
+                } else if (!isPickup && order.shippingStatus === 'SHIPPED') {
+                    statusActionHtml = `
+                        <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 text-center">
+                            <i data-lucide="package" class="text-blue-500 w-8 h-8 mx-auto mb-3"></i>
+                            <p class="text-white text-sm font-bold">¡Tu pedido ha sido enviado!</p>
+                            <p class="text-slate-400 text-[10px] mt-1 uppercase font-bold tracking-widest">Estamos preparando el transporte</p>
+                        </div>
+                    `;
+                } else if (!isPickup && order.shippingStatus === 'IN_TRANSIT') {
+                    statusActionHtml = `
+                        <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-6 text-center">
+                            <i data-lucide="truck" class="text-indigo-500 w-8 h-8 mx-auto mb-3 animate-bounce"></i>
+                            <p class="text-white text-sm font-bold">Pedido en camino</p>
+                            <p class="text-slate-400 text-[10px] mt-1 uppercase font-bold tracking-widest">El repartidor está cerca de tu ubicación</p>
+                        </div>
+                    `;
+                } else {
+                    statusActionHtml = `
+                        <div class="grid grid-cols-1 gap-3">
+                            <a href="${whatsappUrl}" target="_blank" class="bg-brand-accent hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm text-center transition shadow-lg shadow-orange-500/20">
+                                Contactar soporte / Reclamo
+                            </a>
+                            <p class="text-[10px] text-slate-500 text-center uppercase font-bold tracking-tighter">
+                                El estado se actualizará automáticamente cuando nuestro equipo confirme la entrega.
+                            </p>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-brand-dark border border-white/5 rounded-2xl overflow-hidden shadow-xl hover:border-brand-accent/30 transition duration-300">
+                        <div class="p-6 border-b border-white/5 flex flex-wrap justify-between items-center gap-4 bg-white/5">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-brand-accent/20 p-3 rounded-xl">
+                                    <i data-lucide="package" class="text-brand-accent w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-lg">Pedido #ORD-${order.id}</h4>
+                                    <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">${date}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-slate-400 text-sm mr-2">Estado:</span>
+                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border 
+                                    ${order.shippingStatus === 'PENDING' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' : 
+                                      order.shippingStatus === 'SHIPPED' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                                      order.shippingStatus === 'IN_TRANSIT' ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20' :
+                                      order.shippingStatus === 'AWAITING_PICKUP' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
+                                      'bg-green-500/10 text-green-500 border-green-500/20'}">
+                                    ${translateStatus(order.shippingStatus)}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="flex flex-col md:flex-row gap-8">
+                                <div class="flex-1 space-y-4">
+                                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Detalles del Envío</p>
+                                    <div class="bg-white/5 rounded-xl p-4 border border-white/5">
+                                        <p class="text-sm text-slate-300"><span class="text-slate-500 mr-2">Dirección:</span> ${order.shippingAddress || 'No especificada'}</p>
+                                        <p class="text-sm text-slate-300 mt-2"><span class="text-slate-500 mr-2">Total Pagado:</span> <span class="text-white font-bold">S/ ${parseFloat(order.total).toFixed(2)}</span></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="w-full md:w-80 space-y-4">
+                                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">¿Recibiste tu pedido?</p>
+                                    ${statusActionHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function translateStatus(status) {
+            const statusMap = {
+                'COTIZACION': 'Cotizaci\u00f3n en Revisi\u00f3n',
+                'PENDING': 'Pendiente',
+                'SHIPPED': 'Enviado',
+                'IN_TRANSIT': 'En camino',
+                'DELIVERED': 'Entregado',
+                'AWAITING_PICKUP': 'Esperando recojo'
+            };
+            return statusMap[status] || status;
+        }
+
+        async function confirmArrival(orderId) {
+            if (!confirm('¿Confirmas que has recibido todos los productos de este pedido?')) return;
+            
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`/api/orders/${orderId}/confirm-delivery`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    loadUserOrders();
+                    alert('¡Excelente! Gracias por confirmar la recepción.');
+                } else {
+                    alert('Error al procesar la confirmación.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUserOrders);
+
+        async function loadUserReclamaciones() {
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch('/api/reclamaciones/mis', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!res.ok) {
+                    console.warn('reclamaciones/mis respondió:', res.status);
+                    return;
+                }
+                const lista = await res.json();
+                console.log('Reclamaciones del usuario:', lista);
+                renderReclamaciones(lista);
+            } catch(e) {
+                console.error('Error cargando reclamaciones:', e);
+            }
+        }
+
+        function renderReclamaciones(lista) {
+            const section = document.getElementById('section-reclamaciones');
+            section.classList.remove('hidden');
+            if (!lista || lista.length === 0) {
+                document.getElementById('reclamaciones-container').innerHTML =
+                    '<div class="bg-white/5 border border-white/10 rounded-xl p-6 text-center text-slate-500 text-sm">No tienes reclamaciones registradas con tu cuenta.</div>';
+                return;
+            }
+            section.classList.remove('hidden');
+            document.getElementById('reclamaciones-container').innerHTML = lista.map(r => {
+                const fecha = r.createdAt ? new Date(r.createdAt).toLocaleDateString('es-PE') : '-';
+                const isProcesada = r.estado === 'PROCESADA';
+                const badge = isProcesada
+                    ? '<span class="px-3 py-1 rounded-full text-xs font-bold bg-green-500/10 text-green-400 border border-green-500/20">PROCESADA</span>'
+                    : '<span class="px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">PENDIENTE</span>';
+                const msgEstado = isProcesada
+                    ? '<p class="text-green-400 font-semibold text-xs mt-2">\u2713 Tu reclamaci\u00f3n ha sido revisada y procesada por nuestro equipo.</p>'
+                    : '<p class="text-yellow-300/70 text-xs mt-2">\u23f3 Tu reclamaci\u00f3n est\u00e1 siendo revisada. Te responderemos dentro de 15 d\u00edas h\u00e1biles.</p>';
+                return `
+                <div class="bg-brand-dark border ${isProcesada ? 'border-green-500/20' : 'border-yellow-500/10'} rounded-2xl overflow-hidden shadow-xl">
+                    <div class="p-5 border-b border-white/5 flex flex-wrap justify-between items-center gap-4 ${isProcesada ? 'bg-green-500/5' : 'bg-yellow-500/5'}">
+                        <div class="flex items-center gap-4">
+                            <div class="${isProcesada ? 'bg-green-500/20' : 'bg-yellow-500/20'} p-3 rounded-xl">
+                                <i data-lucide="book-open" class="${isProcesada ? 'text-green-400' : 'text-yellow-400'} w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold">#REC-${r.id} &mdash; ${r.tipo}</h4>
+                                <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">${fecha}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-slate-400 text-sm">Estado:</span>
+                            ${badge}
+                        </div>
+                    </div>
+                    <div class="p-5 text-sm space-y-1 text-slate-300">
+                        <p><span class="text-slate-500">Descripci\u00f3n:</span> ${r.descripcion || '-'}</p>
+                        ${msgEstado}
+                    </div>
+                </div>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        loadUserReclamaciones();
+    </script>
+</body>
+</html>

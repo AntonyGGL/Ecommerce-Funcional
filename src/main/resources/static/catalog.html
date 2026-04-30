@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo | Impofer</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#0f172a',
+                            dark: '#1e293b',
+                            accent: '#f97316',
+                            light: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .checkbox-wrapper input:checked + div {
+            background-color: #f97316;
+            border-color: #f97316;
+        }
+        .checkbox-wrapper input:checked + div svg {
+            display: block;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .animate-slide-in-right {
+            animation: slideInRight 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans">
+
+    <!-- Barra superior redes sociales -->
+    <div class="fixed top-0 w-full z-[51] bg-brand-black/95 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-9 flex items-center gap-3">
+            <a href="https://www.facebook.com/Impoferperu" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+               class="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/30 hover:border-brand-accent/50 transition">
+                <svg class="w-3 h-3 fill-current text-slate-300" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/impofer_peru/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+               class="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/30 hover:border-brand-accent/50 transition">
+                <svg class="w-3 h-3 fill-current text-slate-300" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://wa.me/51912112268" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+               class="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/30 hover:border-brand-accent/50 transition">
+                <svg class="w-3 h-3 fill-current text-slate-300" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <nav class="fixed top-9 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
+                    <div class="relative">
+                        <i data-lucide="hexagon" class="text-brand-accent h-9 w-9 fill-brand-accent/10 group-hover:fill-brand-accent/30 transition-all"></i>
+                        <span class="absolute inset-0 flex items-center justify-center font-bold text-xs text-brand-accent">I</span>
+                    </div>
+                    <span class="font-bold text-2xl tracking-tight text-white group-hover:text-white transition">IMPOFER<span class="text-brand-accent">.</span></span>
+                </a>
+
+                <div class="hidden md:flex flex-1 max-w-lg mx-8 relative group">
+                    <input type="text" id="searchInput" placeholder="Buscar en catálogo..." 
+                           class="w-full bg-slate-800/80 border border-slate-700 rounded-full py-2.5 px-12 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-sm text-white placeholder-slate-400 group-hover:bg-slate-800">
+                    <i data-lucide="search" class="absolute left-4 top-3 h-4 w-4 text-slate-400 group-hover:text-brand-accent transition-colors"></i>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <div id="user-nav" class="hidden md:flex flex-col items-end text-xs text-brand-light leading-tight">
+                        <span id="user-greeting">Hola, Invitado</span>
+                        <a id="auth-link" href="login.html" class="font-bold text-white cursor-pointer hover:text-brand-accent transition-colors">Iniciar Sesión</a>
+                    </div>
+                    <div class="h-8 w-[1px] bg-white/10 hidden md:block"></div>
+                    <button class="relative group p-2">
+                        <i data-lucide="shopping-cart" class="h-6 w-6 text-white group-hover:text-brand-accent transition"></i>
+                        <span id="cart-count" class="absolute top-0 right-0 bg-brand-accent text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center ring-2 ring-brand-black">0</span>
+                    </button>
+                    <div id="admin-nav-link"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-10 bg-brand-dark border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center text-xs text-slate-400 mb-4 space-x-2">
+                <a href="index.html" class="hover:text-white">Inicio</a>
+                <span>/</span>
+                <span class="text-brand-accent font-bold">Catálogo Completo</span>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-end">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-white mb-2">Herramientas Profesionales</h1>
+                    <p class="text-slate-400">Mostrando <span class="text-white font-bold" id="product-count">0</span> productos de alta gama.</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center gap-3">
+                    <span class="text-sm text-slate-400">Ordenar:</span>
+                    <select id="sortSelect" class="bg-brand-black border border-white/10 text-white text-sm rounded-lg px-4 py-2 focus:outline-none focus:border-brand-accent cursor-pointer">
+                        <option value="low">Menor Precio</option>
+                        <option value="high">Mayor Precio</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-4 py-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <aside class="w-full lg:w-1/4 flex-shrink-0">
+                <div class="sticky top-24 space-y-8">
+                    <div class="bg-brand-dark p-6 rounded-xl border border-white/5">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i data-lucide="layers" class="w-4 h-4 text-brand-accent"></i> Categorías
+                        </h3>
+                        <ul id="categories-list" class="space-y-3 text-sm text-slate-300">
+                            <!-- Categorías cargadas dinámicamente -->
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="w-full lg:w-3/4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="products-list">
+                    <!-- Productos cargados dinámicamente -->
+                </div>
+
+                <div class="pt-8 flex justify-center" id="pagination-container">
+                    <!-- Paginación dinámica -->
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- Modal del Carrito -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-brand-black/90 backdrop-blur-sm z-[60] flex items-center justify-end">
+        <div class="bg-brand-dark w-full max-w-md h-full shadow-2xl border-l border-white/10 flex flex-col animate-slide-in-right">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="shopping-cart" class="text-brand-accent"></i> Tu Carrito
+                </h2>
+                <button onclick="toggleCart()" class="text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Items del carrito -->
+                <p class="text-center text-slate-500 py-20">Tu carrito está vacío</p>
+            </div>
+
+            <div class="p-6 border-t border-white/5 bg-brand-black/50">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-slate-400 font-medium">Total estimado</span>
+                    <span id="cart-total" class="text-3xl font-bold text-white">S/ 0.00</span>
+                </div>
+                <button onclick="window.location.href='checkout.html'" class="w-full text-white py-4 rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#25d366,#128c7e)">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Cotizar por WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 border-t border-white/10 pt-16 pb-8 text-slate-400">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="hexagon" class="text-brand-accent h-6 w-6 fill-brand-accent/20"></i>
+                        <span class="font-bold text-xl text-white tracking-tight">IMPOFER<span class="text-brand-accent">.</span></span>
+                    </div>
+                    <p class="text-sm leading-relaxed">
+                        Tu socio confiable en ferretería industrial. Suministramos las herramientas que construyen el futuro.
+                    </p>
+                    <!-- Redes sociales -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="https://www.facebook.com/Impoferperu" target="_blank" rel="noopener noreferrer"
+                           class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/20 hover:border-brand-accent/50 transition" aria-label="Facebook">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z"/></svg>
+                        </a>
+                        <a href="https://www.instagram.com/impofer_peru/" target="_blank" rel="noopener noreferrer"
+                           class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/20 hover:border-brand-accent/50 transition" aria-label="Instagram">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                        <a href="https://wa.me/51912112268" target="_blank" rel="noopener noreferrer"
+                           class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-accent/20 hover:border-brand-accent/50 transition" aria-label="WhatsApp">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-white mb-6">Categorías</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="javascript:void(0)" onclick="filterProducts('MÁQUINAS')" class="hover:text-brand-accent transition">Máquinas</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterProducts('REPUESTOS')" class="hover:text-brand-accent transition">Repuestos</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterProducts('ACCESORIOS')" class="hover:text-brand-accent transition">Accesorios</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterProducts('CONSTRUCCIÓN')" class="hover:text-brand-accent transition">Construcción</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterProducts('OFERTAS')" class="hover:text-brand-accent transition">Ofertas</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-6">Atención al Cliente</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="javascript:void(0)" onclick="showFooterModal('order')" class="hover:text-brand-accent transition">Estado del Pedido</a></li>
+                        <li><a href="javascript:void(0)" onclick="showFooterModal('shipping')" class="hover:text-brand-accent transition">Política de Devoluciones</a></li>
+                        <li><a href="javascript:void(0)" onclick="showFooterModal('faq')" class="hover:text-brand-accent transition">Preguntas Frecuentes</a></li>
+                        <li><a href="https://wa.me/51912112268" target="_blank" class="hover:text-brand-accent transition">Contacto WhatsApp</a></li>
+                        <li><a href="terminos.html" class="hover:text-brand-accent transition">Términos y Condiciones</a></li>
+                        <li><a href="javascript:void(0)" onclick="openLibroReclamaciones()" class="hover:text-brand-accent transition flex items-center gap-1">
+                            <i data-lucide="book-open" class="w-3 h-3"></i> Libro de Reclamaciones
+                        </a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div>
+                    <h4 class="font-bold text-white mb-6">Contacto</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-brand-accent mt-0.5 shrink-0"></i>
+                            <span>Atahualpa 436A, Huancayo, Perú</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-brand-accent shrink-0"></i>
+                            <a href="tel:+51912112268" class="hover:text-white transition">+51 912 112 268</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-brand-accent shrink-0"></i>
+                            <a href="mailto:impofersl@gmail.com" class="hover:text-white transition">impofersl@gmail.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-slate-500 text-xs">© 2024 Impofer S.A. Todos los derechos reservados.</p>
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                    <a href="terminos.html" class="hover:text-slate-300 transition">Términos y Condiciones</a>
+                    <span>·</span>
+                    <a href="terminos.html#devoluciones" class="hover:text-slate-300 transition">Política de Devoluciones</a>
+                    <span>·</span>
+                    <a href="javascript:void(0)" onclick="openLibroReclamaciones()" class="hover:text-slate-300 transition">Libro de Reclamaciones</a>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+        function checkSession() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            const userName = localStorage.getItem('userName');
+            
+            if (token) {
+                document.getElementById('user-greeting').innerText = `Hola, ${userName}`;
+                const authLink = document.getElementById('auth-link');
+                authLink.innerText = 'Cerrar Sesión';
+                authLink.href = '#';
+                
+                authLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.reload();
+                });
+
+                if (role === 'ADMIN') {
+                    const adminNav = document.getElementById('admin-nav-link');
+                    adminNav.innerHTML = `
+                        <div class="h-8 w-[1px] bg-white/10 mx-2"></div>
+                        <a href="admin.html" class="bg-brand-accent/10 text-brand-accent px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2 border border-brand-accent/20 hover:bg-brand-accent/20 transition">
+                            <i data-lucide="shield" class="w-3 h-3"></i> PANEL ADMIN
+                        </a>
+                    `;
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                allProducts = await response.json();
+                filteredProducts = [...allProducts];
+                currentPage = 1;
+                renderPage();
+                loadCategories();
+                document.getElementById('product-count').textContent = allProducts.length;
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        function renderPage() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const productsToShow = filteredProducts.slice(startIndex, endIndex);
+            
+            displayProducts(productsToShow);
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+            const container = document.getElementById('pagination-container');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<nav class="flex gap-2">';
+            
+            // Botón Anterior
+            html += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="w-10 h-10 rounded-lg bg-brand-accent text-white font-bold flex items-center justify-center shadow-lg shadow-orange-500/20">${i}</button>`;
+                } else {
+                    html += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-lg bg-brand-dark border border-white/5 text-slate-400 font-bold flex items-center justify-center hover:bg-slate-800 hover:text-white transition">${i}</button>`;
+                }
+            }
+
+            // Botón Siguiente
+            html += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>`;
+
+            html += '</nav>';
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function loadCategories() {
+            if (allProducts.length === 0) return;
+            
+            // Get unique categories from products
+            const categories = [...new Set(allProducts.map(p => p.category ? p.category.name : 'Varios'))];
+            
+            const list = document.getElementById('categories-list');
+            list.innerHTML = `
+                <li onclick="filterProducts('All')" class="flex items-center justify-between group cursor-pointer hover:text-white transition">
+                    <span class="font-bold">Todos los Productos</span>
+                    <span class="bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded text-[10px]">${allProducts.length}</span>
+                </li>
+                ${categories.map(cat => `
+                    <li onclick="filterProducts('${cat}')" class="flex items-center justify-between group cursor-pointer hover:text-white transition">
+                        <span>${cat}</span>
+                        <span class="bg-white/5 px-2 py-0.5 rounded text-[10px] group-hover:bg-white/10 transition">${allProducts.filter(p => p.category && p.category.name === cat).length}</span>
+                    </li>
+                `).join('')}
+            `;
+        }
+
+        function filterProducts(category) {
+            currentPage = 1;
+            if (category === 'All') {
+                filteredProducts = [...allProducts];
+            } else {
+                filteredProducts = allProducts.filter(p => p.category && p.category.name === category);
+            }
+            renderPage();
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('products-list');
+            if (products.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-20 text-center"><p class="text-slate-500">No hay productos disponibles.</p></div>';
+                return;
+            }
+            container.innerHTML = products.map(product => {
+                const isOutOfStock = product.stock === 0;
+                const buttonClass = isOutOfStock 
+                    ? "w-full bg-slate-600 text-slate-300 py-2 rounded font-bold text-sm shadow-lg cursor-not-allowed flex items-center justify-center gap-2" 
+                    : "w-full bg-brand-accent text-white py-2 rounded font-bold text-sm shadow-lg hover:bg-orange-600 flex items-center justify-center gap-2";
+                const buttonDisabled = isOutOfStock ? "disabled" : "";
+                const buttonContent = isOutOfStock 
+                    ? `<i data-lucide="alert-circle" class="w-4 h-4"></i> Agotado`
+                    : `<i data-lucide="plus" class="w-4 h-4"></i> Agregar`;
+                
+                return `
+                <div onclick="showProductDetail('${encodeURIComponent(JSON.stringify(product))}')" class="rounded-xl p-4 hover:-translate-y-2 transition duration-300 border group relative cursor-pointer ${isOutOfStock ? 'bg-slate-800/50 border-red-500/30 opacity-70 grayscale hover:grayscale' : 'bg-brand-dark border-white/5 hover:border-brand-accent/30'}">
+                    ${isOutOfStock ? `
+                        <div class="absolute top-2 right-2 z-10">
+                            <div class="bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-sm shadow-lg flex items-center gap-2 border-2 border-red-400 whitespace-nowrap">
+                                <i data-lucide="x-circle" class="w-4 h-4"></i> SIN STOCK
+                            </div>
+                        </div>
+                    ` : ''}
+                    <div class="relative bg-white/5 rounded-lg h-52 mb-4 flex items-center justify-center overflow-hidden ${isOutOfStock ? 'brightness-75' : ''}">
+                        <img src="${product.imageUrl || 'https://via.placeholder.com/200'}" class="h-4/5 object-contain mix-blend-lighten group-hover:scale-110 transition duration-500 ${isOutOfStock ? 'grayscale' : ''}">
+                        ${isOutOfStock ? `
+                            <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+                                <i data-lucide="alert-triangle" class="w-12 h-12 text-red-400 mb-2"></i>
+                                <span class="text-white font-bold text-lg">AGOTADO</span>
+                                <span class="text-red-300 text-xs mt-1">No hay stock disponible</span>
+                            </div>
+                        ` : ''}
+                        <div class="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition duration-300">
+                            <button class="${buttonClass}" ${buttonDisabled} onclick="event.stopPropagation(); ${!isOutOfStock ? `addToCart(${product.id})` : ''}">
+                                ${buttonContent}
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="font-semibold text-lg ${isOutOfStock ? 'text-slate-400' : 'text-white'} mb-1 truncate">${product.name}</h3>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-xl font-bold ${isOutOfStock ? 'text-slate-500 line-through' : 'text-white'}">S/ ${product.price}</span>
+                        ${isOutOfStock ? `<span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded border border-red-500/30 font-bold">Próximamente</span>` : ''}
+                    </div>
+                </div>
+            `}).join('');
+            lucide.createIcons();
+        }
+
+        function showProductDetail(productJson) {
+            const product = JSON.parse(decodeURIComponent(productJson));
+            const isOutOfStock = product.stock === 0;
+            const modal = document.createElement('div');
+            modal.className = "fixed inset-0 bg-brand-black/95 backdrop-blur-md z-[300] flex items-center justify-center p-4 animate-fade-in";
+            modal.innerHTML = `
+                <div class="bg-brand-dark border ${isOutOfStock ? 'border-red-500/30' : 'border-white/10'} p-8 rounded-3xl max-w-4xl w-full relative shadow-2xl flex flex-col md:flex-row gap-8 ${isOutOfStock ? 'ring-2 ring-red-500/20' : ''}">
+                    <button onclick="this.closest('div.fixed').remove()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition z-10">
+                        <i data-lucide="x" class="w-8 h-8"></i>
+                    </button>
+                    
+                    ${isOutOfStock ? `
+                        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 z-20">
+                            <div class="bg-red-600 text-white font-bold px-4 py-2 rounded-full text-base shadow-lg border-2 border-red-400 flex items-center gap-2">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i> PRODUCTO SIN STOCK
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="w-full md:w-1/2 bg-white/5 rounded-2xl p-8 flex items-center justify-center relative ${isOutOfStock ? 'brightness-50' : ''}">
+                        <img src="${product.imageUrl || 'https://via.placeholder.com/200'}" class="max-h-80 object-contain hover:scale-110 transition duration-500 ${isOutOfStock ? 'grayscale' : ''}">
+                        ${isOutOfStock ? `
+                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 rounded-2xl">
+                                <i data-lucide="package-x" class="w-20 h-20 text-red-400 mb-4"></i>
+                                <span class="text-white font-bold text-2xl">SIN STOCK</span>
+                                <span class="text-red-300 text-sm mt-2">No hay disponibilidad</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="w-full md:w-1/2 flex flex-col">
+                        <span class="text-brand-accent font-bold uppercase tracking-widest text-xs mb-2">${product.category ? product.category.name : 'General'}</span>
+                        <h2 class="text-3xl font-bold ${isOutOfStock ? 'text-slate-400' : 'text-white'} mb-4">${product.name}</h2>
+                        <div class="h-[1px] bg-white/5 w-full mb-6"></div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8 flex-1">${product.description || 'Producto de alta calidad industrial con garantía oficial y soporte técnico especializado de IMPOFER.'}</p>
+                        
+                        ${isOutOfStock ? `
+                            <div class="bg-red-900/30 border-2 border-red-500/40 rounded-xl p-5 mb-6 flex flex-col gap-3">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="alert-triangle" class="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5"></i>
+                                    <div className="flex-1">
+                                        <p class="text-red-300 font-bold text-base">Producto Agotado</p>
+                                        <p class="text-slate-300 text-sm mt-2 leading-relaxed">Por el momento este producto no tiene stock disponible. Se contará con más stock próximamente. Te recomendamos vuelvas más tarde o contáctanos para recibir notificaciones de disponibilidad.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-2 pt-3 border-t border-red-500/20">
+                                    <p class="text-xs text-slate-400">✓ Consulta por disponibilidad: <span class="text-brand-accent font-bold">+51 912112268</span></p>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="mb-4 p-3 bg-brand-accent/10 border border-brand-accent/30 rounded-lg">
+                                <p class="text-xs text-slate-400 mb-1">Disponibilidad en Stock</p>
+                                <p class="text-xl font-bold text-brand-accent">${product.stock} ${product.stock === 1 ? 'unidad' : 'unidades'} disponibles</p>
+                            </div>
+                            <div class="flex items-center justify-between mb-8">
+                                <span class="text-4xl font-bold text-brand-accent">S/ ${product.price}</span>
+                                <span class="text-xs text-slate-500 flex items-center gap-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i> Garantía Impofer
+                                </span>
+                            </div>
+                        `}
+                        
+                        ${!isOutOfStock ? `
+                            <button onclick="addToCart(${product.id}); this.closest('div.fixed').remove()" class="w-full bg-brand-accent text-white py-4 rounded-xl font-extrabold text-sm tracking-widest shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition flex items-center justify-center gap-3">
+                                <i data-lucide="shopping-bag" class="w-5 h-5"></i> AÑADIR AL CARRITO
+                            </button>
+                        ` : `
+                            <div class="space-y-3">
+                                <button onclick="this.closest('div.fixed').remove()" class="w-full bg-slate-700 text-slate-300 py-4 rounded-xl font-extrabold text-sm tracking-widest shadow-lg cursor-not-allowed flex items-center justify-center gap-3">
+                                    <i data-lucide="package-x" class="w-5 h-5"></i> SIN DISPONIBILIDAD
+                                </button>
+                                <button onclick="window.open('https://wa.me/51912112268?text=' + encodeURIComponent('Hola, ¿cuándo tendrán disponible el producto: ${product.name}?'), '_blank'); this.closest('div.fixed').remove()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm tracking-widest shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-2">
+                                    <i data-lucide="send" class="w-4 h-4"></i> Consultar por WhatsApp
+                                </button>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Validate stock availability
+            if (product.stock === 0) {
+                alert('Lo siento, este producto está agotado.\n\nSe contará con más stock próximamente. Por favor, vuelve más tarde o contáctanos para información de disponibilidad.');
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.productId === productId);
+            
+            // Check stock limit
+            const currentQuantity = existingItem ? existingItem.quantity : 0;
+            if (currentQuantity >= product.stock) {
+                alert(`No puedes agregar más de ${product.stock} ${product.stock === 1 ? 'producto' : 'productos'} de ${product.name}.\n\nStock disponible: ${product.stock}`);
+                return;
+            }
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    imageUrl: product.imageUrl,
+                    quantity: 1
+                });
+            }
+            
+            updateCartUI();
+            toggleCart(true);
+        }
+
+        function toggleCart(forceOpen = false) {
+            const modal = document.getElementById('cart-modal');
+            if (forceOpen) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        function updateCartUI() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('cart-count').textContent = cart.reduce((acc, item) => acc + item.quantity, 0);
+            
+            const list = document.getElementById('cart-items');
+            const totalElement = document.getElementById('cart-total');
+            
+            if (cart.length === 0) {
+                list.innerHTML = '<p class="text-center text-slate-500 py-20">Tu carrito está vacío</p>';
+                totalElement.textContent = 'S/ 0.00';
+                return;
+            }
+
+            let total = 0;
+            list.innerHTML = cart.map((item, index) => {
+                total += item.price * item.quantity;
+                return `
+                    <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl border border-white/5">
+                        <img src="${item.imageUrl || 'https://via.placeholder.com/40'}" class="w-12 h-12 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <p class="font-bold text-sm text-white truncate">${item.name}</p>
+                            <p class="text-brand-accent font-bold text-xs">S/ ${item.price} x ${item.quantity}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-slate-500 hover:text-red-400">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            totalElement.textContent = `$${total.toFixed(2)}`;
+            lucide.createIcons();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        // Add event listener to the main cart button in nav
+        document.querySelector('button.relative.group.p-2').onclick = (e) => {
+            e.preventDefault();
+            toggleCart();
+        };
+
+        // Lógica de Ordenamiento
+        document.getElementById('sortSelect').addEventListener('change', function(e) {
+            const type = e.target.value;
+
+            if (type === 'low') {
+                filteredProducts.sort((a, b) => a.price - b.price);
+            } else if (type === 'high') {
+                filteredProducts.sort((a, b) => b.price - a.price);
+            }
+
+            currentPage = 1;
+            renderPage();
+        });
+
+        // Lógica de Búsqueda
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            filteredProducts = allProducts.filter(p => 
+                p.name.toLowerCase().includes(term) || 
+                (p.category && p.category.name.toLowerCase().includes(term)) ||
+                (p.description && p.description.toLowerCase().includes(term))
+            );
+            currentPage = 1;
+            renderPage();
+        });
+
+        // Lógica de Modales del Footer
+        function showFooterModal(type) {
+            let title = "";
+            let content = "";
+            
+            if (type === 'order') {
+                title = "Estado del Pedido";
+                content = `
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-brand-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="package" class="text-brand-accent w-8 h-8"></i>
+                        </div>
+                        <p class="text-slate-300 mb-4">Si ya realizaste una compra, puedes realizar el seguimiento detallado de tu pedido desde la sección:</p>
+                        <a href="my-orders.html" class="inline-block bg-brand-accent text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transition">Mis Pedidos</a>
+                    </div>
+                `;
+            } else if (type === 'shipping') {
+                title = "Envíos y Devoluciones";
+                content = `
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <div class="flex gap-3 items-start">
+                            <div class="bg-brand-accent/20 p-2 rounded text-brand-accent shrink-0">1</div>
+                            <p>Si el pedido NO ha salido de tienda (máximo <span class="text-white font-bold">5 horas</span> después de la compra), contactarse al <span class="text-brand-accent font-bold">912112268</span> para cambios o cancelaciones.</p>
+                        </div>
+                        <div class="flex gap-3 items-start border-t border-white/5 pt-4">
+                            <div class="bg-slate-800 p-2 rounded text-slate-400 shrink-0">2</div>
+                            <p>Pasadas las <span class="text-white font-bold">12 horas</span>, se procederá a realizar el envío de manera normal <span class="text-white font-bold">sin lugar a reclamos</span> o modificaciones de ruta.</p>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'faq') {
+                title = "Preguntas Frecuentes";
+                content = `
+                    <div class="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                        <div>
+                            <h5 class="font-bold text-white text-sm mb-1">¿Cómo funciona este marketplace?</h5>
+                            <p class="text-xs text-slate-400">Impofer opera como un marketplace vía WhatsApp. Exploras el catálogo online, agregas lo que te interesa al carrito y nos contactas directo por WhatsApp. Un asesor confirma disponibilidad, precio final y coordina el envío contigo.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-white text-sm mb-1">¿Cuáles son los métodos de pago?</h5>
+                            <p class="text-xs text-slate-400">Aceptamos Efectivo, Yape / Plin y Transferencia bancaria. No procesamos pagos con tarjeta ni pasarelas online. Todo se coordina directamente con tu asesor por WhatsApp.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-white text-sm mb-1">¿Cómo confirmo mi compra?</h5>
+                            <p class="text-xs text-slate-400">Después de enviarnos tu cotización por WhatsApp, el asesor te enviará el número de cuenta o QR de pago. Una vez confirmado el depósito, tu pedido queda registrado y se coordina la entrega.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-white text-sm mb-1">¿Realizan envíos a provincias?</h5>
+                            <p class="text-xs text-slate-400">Sí, enviamos a todo el Perú a través de agencias de carga certificadas. El costo y tiempo de envío se confirma con tu asesor.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-white text-sm mb-1">¿Cuentan con tienda física?</h5>
+                            <p class="text-xs text-slate-400">Sí, encuéntranos en Atahualpa 436A, Huancayo. También puedes coordinar el recojo en tienda sin costo adicional.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-white text-sm mb-1">¿Qué marcas distribuyen?</h5>
+                            <p class="text-xs text-slate-400">Somos distribuidores autorizados de Makita, Bosch, DeWalt y Milwaukee, entre otras marcas líderes.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = "fixed inset-0 bg-brand-black/95 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fade-in";
+            modal.innerHTML = `
+                <div class="bg-brand-dark border border-white/10 p-8 rounded-3xl max-w-md w-full relative shadow-2xl">
+                    <button onclick="this.closest('div.fixed').remove()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold mb-6 text-white">${title}</h2>
+                    ${content}
+                    <button onclick="this.closest('div.fixed').remove()" class="w-full mt-8 bg-slate-800 py-3 rounded-xl font-bold text-sm hover:bg-slate-700 transition">Cerrar</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkSession();
+            loadProducts();
+            updateCartUI(); // Carga el carrito guardado
+        });
+
+        // ── Libro de Reclamaciones ──────────────────────────────────────────
+        function openLibroReclamaciones() {
+            if (document.getElementById('libro-modal')) return;
+            const modal = document.createElement('div');
+            modal.id = 'libro-modal';
+            modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-[400] flex items-start justify-center p-4 overflow-y-auto';
+            modal.innerHTML = `
+                <div class="bg-brand-dark border border-white/10 rounded-3xl max-w-2xl w-full my-8 shadow-2xl relative">
+                    <div class="flex items-center justify-between p-6 border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-brand-accent/20 rounded-lg">
+                                <i data-lucide="book-open" class="w-5 h-5 text-brand-accent"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-white">Libro de Reclamaciones</h2>
+                                <p class="text-xs text-slate-400">Conforme a la Ley N° 29571 — Código de Protección al Consumidor</p>
+                            </div>
+                        </div>
+                        <button onclick="document.getElementById('libro-modal').remove()" class="p-2 hover:bg-white/5 rounded-full transition text-slate-400 hover:text-white">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <div class="mx-6 mt-5 mb-2 p-3 bg-blue-900/20 border border-blue-500/30 rounded-xl text-xs text-slate-300 leading-relaxed">
+                        <strong class="text-white">Aviso:</strong> La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI. Responderemos en máximo 15 días hábiles.
+                    </div>
+                    <form id="libro-form" class="p-6 space-y-5" onsubmit="submitReclamacion(event)">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">Tipo de registro *</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center gap-3 p-3 rounded-xl border border-white/10 cursor-pointer hover:border-brand-accent/50 transition has-[:checked]:border-brand-accent has-[:checked]:bg-brand-accent/10">
+                                    <input type="radio" name="tipo" value="RECLAMO" required class="accent-orange-500">
+                                    <div><p class="text-white text-sm font-semibold">Reclamo</p><p class="text-slate-400 text-xs">Disconformidad con el producto</p></div>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-xl border border-white/10 cursor-pointer hover:border-brand-accent/50 transition has-[:checked]:border-brand-accent has-[:checked]:bg-brand-accent/10">
+                                    <input type="radio" name="tipo" value="QUEJA" class="accent-orange-500">
+                                    <div><p class="text-white text-sm font-semibold">Queja</p><p class="text-slate-400 text-xs">Mala atención recibida</p></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Datos del Consumidor</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1">Tipo de documento *</label>
+                                    <select name="tipoDocumento" required class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="DNI">DNI</option><option value="RUC">RUC</option>
+                                        <option value="CE">Carné de Extranjería</option><option value="PASAPORTE">Pasaporte</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1">N° documento *</label>
+                                    <input type="text" name="numeroDocumento" required maxlength="20" placeholder="12345678"
+                                           class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                                </div>
+                            </div>
+                            <input type="text" name="nombreConsumidor" required maxlength="255" placeholder="Apellidos y nombres *"
+                                   class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                            <input type="text" name="domicilio" maxlength="500" placeholder="Domicilio"
+                                   class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="email" name="correo" required maxlength="255" placeholder="Correo electrónico *"
+                                       class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                                <input type="tel" name="telefono" maxlength="20" placeholder="Teléfono"
+                                       class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bien Contratado</h3>
+                            <input type="text" name="bienContratado" required placeholder="Producto o servicio *"
+                                   class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                            <input type="number" name="montoReclamado" min="0" step="0.01" placeholder="Monto reclamado S/. (opcional)"
+                                   class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition placeholder-slate-500">
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Detalle</h3>
+                            <textarea name="descripcion" required rows="3" placeholder="Descripción del reclamo/queja *"
+                                      class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition resize-none placeholder-slate-500"></textarea>
+                            <textarea name="pedido" required rows="2" placeholder="¿Qué solución esperas? *"
+                                      class="w-full bg-slate-800 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent transition resize-none placeholder-slate-500"></textarea>
+                        </div>
+                        <div id="libro-error" class="hidden p-3 bg-red-900/30 border border-red-500/40 rounded-lg text-red-300 text-sm"></div>
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="document.getElementById('libro-modal').remove()"
+                                    class="flex-1 py-3 rounded-xl border border-white/10 font-bold text-sm hover:bg-white/5 transition">Cancelar</button>
+                            <button type="submit" id="libro-submit-btn"
+                                    class="flex-1 py-3 rounded-xl bg-brand-accent text-white font-bold text-sm hover:bg-orange-600 transition shadow-lg shadow-orange-500/20">Enviar Reclamación</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+            // Pre-fill correo with logged-in user's email
+            const userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                const correoInput = document.querySelector('#libro-form input[name="correo"]');
+                if (correoInput) { correoInput.value = userEmail; correoInput.readOnly = true; }
+            }
+        }
+
+        async function submitReclamacion(event) {
+            event.preventDefault();
+            const form = event.target;
+            const errorDiv = document.getElementById('libro-error');
+            const submitBtn = document.getElementById('libro-submit-btn');
+            const data = {
+                tipo: form.querySelector('[name="tipo"]:checked')?.value,
+                tipoDocumento: form.querySelector('[name="tipoDocumento"]').value,
+                numeroDocumento: form.querySelector('[name="numeroDocumento"]').value.trim(),
+                nombreConsumidor: form.querySelector('[name="nombreConsumidor"]').value.trim(),
+                domicilio: form.querySelector('[name="domicilio"]').value.trim(),
+                correo: form.querySelector('[name="correo"]').value.trim(),
+                telefono: form.querySelector('[name="telefono"]').value.trim(),
+                bienContratado: form.querySelector('[name="bienContratado"]').value.trim(),
+                montoReclamado: form.querySelector('[name="montoReclamado"]').value || null,
+                descripcion: form.querySelector('[name="descripcion"]').value.trim(),
+                pedido: form.querySelector('[name="pedido"]').value.trim()
+            };
+            if (!data.tipo) {
+                errorDiv.textContent = 'Por favor selecciona el tipo de registro.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            errorDiv.classList.add('hidden');
+            try {
+                const res = await fetch('/api/reclamaciones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (res.ok && result.success) {
+                    document.getElementById('libro-form').innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="check-circle" class="text-green-400 w-10 h-10"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Reclamación Registrada</h3>
+                            <p class="text-brand-accent font-bold text-lg mb-3">#REC-${result.id}</p>
+                            <p class="text-slate-300 text-sm leading-relaxed max-w-sm mx-auto">${result.message}</p>
+                            <button onclick="document.getElementById('libro-modal').remove()" class="mt-6 px-8 py-3 bg-brand-accent rounded-xl font-bold text-sm hover:bg-orange-600 transition">Cerrar</button>
+                        </div>`;
+                    lucide.createIcons();
+                } else { throw new Error(); }
+            } catch {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar Reclamación';
+                errorDiv.textContent = 'Ocurrió un error. Por favor intenta nuevamente.';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

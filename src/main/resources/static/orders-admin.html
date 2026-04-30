@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos | Impofer Admin</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0f172a',
+                            dark: '#1e293b',
+                            card: '#1e293b',
+                            accent: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-brand-dark border-r border-white/5 hidden md:flex flex-col">
+        <div class="h-20 flex items-center px-6 border-b border-white/5 font-bold text-brand-accent tracking-tighter text-xl">
+            IMPOFER <span class="text-white ml-2 text-xs font-normal border border-white/20 px-1 rounded">ADMIN</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-accent/10 text-brand-accent rounded-lg transition-colors font-bold">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i> Pedidos
+            </a>
+            <a href="clients-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="users" class="w-5 h-5"></i> Clientes
+            </a>
+            <a href="inventory-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="package" class="w-5 h-5"></i> Productos
+            </a>
+            <a href="reclamaciones-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="book-open" class="w-5 h-5"></i> Reclamaciones
+            </a>
+            <a href="cotizaciones-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="file-text" class="w-5 h-5"></i> Cotizaciones
+            </a>
+            <div class="pt-8 space-y-2">
+                 <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-400/10 w-full rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Cerrar Sesión
+                </button>
+                <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors border border-white/5 mx-0">
+                    <i data-lucide="external-link" class="w-5 h-5"></i> Ir a la tienda
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="h-20 bg-brand-black/90 border-b border-white/5 flex justify-between items-center px-8">
+            <h1 class="text-xl font-bold">Gestión de Pedidos</h1>
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-slate-500 font-bold uppercase" id="order-count">-- Pedidos</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 bg-brand-black">
+            <div class="bg-brand-card rounded-xl border border-white/5 overflow-hidden shadow-2xl">
+                <div class="p-4 border-b border-white/5 flex flex-wrap gap-4 bg-white/5 items-center">
+                    <div class="flex-1 min-w-[300px] relative">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-500"></i>
+                        <input type="text" id="searchInput" oninput="debounceSearch()" placeholder="Buscar por ID, cliente o correo..." class="bg-brand-black border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm w-full focus:border-brand-accent outline-none">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase">Desde</span>
+                        <input type="date" id="startDate" onchange="loadOrders(0)" class="bg-brand-black border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brand-accent outline-none [color-scheme:dark]">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase">Hasta</span>
+                        <input type="date" id="endDate" onchange="loadOrders(0)" class="bg-brand-black border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brand-accent outline-none [color-scheme:dark]">
+                    </div>
+                    <button onclick="clearFilters()" class="text-[10px] text-slate-400 hover:text-white transition uppercase font-bold border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/5">Limpiar</button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-400">
+                        <thead class="bg-white/5 text-[10px] uppercase font-bold text-slate-500 border-b border-white/5">
+                            <tr>
+                                <th class="px-6 py-4">ID Pedido</th>
+                                <th class="px-6 py-4">Cliente</th>
+                                <th class="px-6 py-4">Método</th>
+                                <th class="px-6 py-4">Total</th>
+                                <th class="px-6 py-4">Estado</th>
+                                <th class="px-6 py-4">Progreso de Envío</th>
+                                <th class="px-6 py-4 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table" class="divide-y divide-white/5">
+                            <!-- JS content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 border-t border-white/5 bg-white/5 flex items-center justify-between">
+                    <p class="text-[10px] text-slate-500 font-bold uppercase" id="pagination-info">Mostrando -- de -- pedidos</p>
+                    <div class="flex gap-1" id="pagination-controls">
+                        <!-- Buttons here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Detalles de Envío -->
+    <div id="addressModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-dark border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+                    <i data-lucide="truck" class="text-brand-accent w-5 h-5"></i> Detalles de Logística
+                </h3>
+                <button onclick="closeModal()" class="text-slate-500 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-8 space-y-6">
+                <div>
+                    <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2 block">Cliente</label>
+                    <p id="modalName" class="text-white font-semibold text-lg"></p>
+                </div>
+                <div>
+                    <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2 block">Empresa</label>
+                    <p id="modalCompany" class="text-slate-300"></p>
+                </div>
+                <div class="bg-brand-black/50 p-4 rounded-xl border border-white/5">
+                    <label class="text-[10px] text-brand-accent font-bold uppercase tracking-wider mb-2 block flex items-center gap-1">
+                        <i data-lucide="map-pin" class="w-3 h-3"></i> Dirección de Entrega
+                    </label>
+                    <p id="modalAddress" class="text-white text-sm leading-relaxed"></p>
+                </div>
+                <div id="modalBillingSection" class="bg-brand-black/50 p-4 rounded-xl border border-white/5">
+                    <label class="text-[10px] text-brand-accent font-bold uppercase tracking-wider mb-2 block flex items-center gap-1">
+                        <i data-lucide="file-text" class="w-3 h-3"></i> Comprobante de Pago
+                    </label>
+                    <p id="modalBillingInfo" class="text-white text-sm leading-relaxed"></p>
+                </div>
+                <div class="bg-brand-black/50 p-4 rounded-xl border border-white/5">
+                    <label class="text-[10px] text-brand-accent font-bold uppercase tracking-wider mb-3 block flex items-center gap-1">
+                        <i data-lucide="shopping-bag" class="w-3 h-3"></i> Productos
+                    </label>
+                    <div id="modalProducts" class="space-y-2"></div>
+                </div>
+            </div>
+            <div class="p-6 bg-white/5 flex justify-end">
+                <button onclick="closeModal()" class="bg-brand-accent hover:bg-brand-accent/90 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all shadow-lg shadow-brand-accent/20">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function checkAdmin() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            if (!token || role !== 'ADMIN') {
+                window.location.href = 'login.html';
+            }
+        }
+        checkAdmin();
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        let currentPage = 0;
+        const ordersMap = {};
+
+        async function loadOrders(page = 0) {
+            // Asegurarnos de que page sea un número
+            if (typeof page !== 'number') page = 0;
+            currentPage = page;
+            
+            const token = localStorage.getItem('token');
+            const search = document.getElementById('searchInput').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            let url = `/api/admin/orders?page=${page}&size=20`;
+            if (search) url += `&search=${encodeURIComponent(search)}`;
+            if (startDate) url += `&startDate=${startDate}`;
+            if (endDate) url += `&endDate=${endDate}`;
+
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Error al cargar pedidos');
+                
+                const data = await response.json();
+                const orders = data.orders;
+                orders.forEach(o => ordersMap[o.id] = o);
+                
+                const html = orders.map(order => `
+                    <tr class="hover:bg-white/5 transition-colors group">
+                        <td class="px-6 py-4 font-bold text-white tracking-tighter">#ORD-${order.id}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="text-white font-medium">${order.customer?.name || 'Invitado'}</span>
+                                <span class="text-[10px] text-slate-500">${order.customer?.email || 'N/A'}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full ${order.shippingMethod === 'RECOJO EN TIENDA' ? 'bg-orange-500' : 'bg-blue-400'}"></span>
+                                <span class="text-[10px] font-bold uppercase tracking-wider ${order.shippingMethod === 'RECOJO EN TIENDA' ? 'text-orange-500' : 'text-blue-400'}">
+                                    ${order.shippingMethod}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 font-bold text-white">S/ ${parseFloat(order.total).toFixed(2)}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 ${order.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'} rounded text-[10px] font-bold uppercase tracking-wider border ${order.status === 'COMPLETED' ? 'border-green-500/20' : 'border-yellow-500/20'}">
+                                ${order.status || 'PENDING'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            ${order.shippingMethod === 'ENVÍO A DOMICILIO' ? `
+                                <div class="flex gap-1">
+                                    <button onclick="updateShipping(${order.id}, 'SHIPPED')" class="px-2 py-0.5 rounded text-[9px] font-bold transition-all border ${order.shippingStatus === 'SHIPPED' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white/5 text-slate-500 border-white/10 hover:border-blue-500/50'}">Enviado</button>
+                                    <button onclick="updateShipping(${order.id}, 'IN_TRANSIT')" class="px-2 py-0.5 rounded text-[9px] font-bold transition-all border ${order.shippingStatus === 'IN_TRANSIT' ? 'bg-indigo-500 text-white border-indigo-600' : 'bg-white/5 text-slate-500 border-white/10 hover:border-indigo-500/50'}">En camino</button>
+                                    <button onclick="updateShipping(${order.id}, 'DELIVERED')" class="px-2 py-0.5 rounded text-[9px] font-bold transition-all border ${order.shippingStatus === 'DELIVERED' ? 'bg-green-500 text-white border-green-600' : 'bg-white/5 text-slate-500 border-white/10 hover:border-green-500/50'}">Entregado</button>
+                                </div>
+                            ` : `
+                                <div class="flex gap-1">
+                                    <button onclick="updateShipping(${order.id}, 'AWAITING_PICKUP')" class="px-2 py-0.5 rounded text-[9px] font-bold transition-all border ${order.shippingStatus === 'AWAITING_PICKUP' ? 'bg-orange-500 text-white border-orange-600' : 'bg-white/5 text-slate-500 border-white/10 hover:border-orange-500/50'}">Esperando</button>
+                                    <button onclick="updateShipping(${order.id}, 'DELIVERED')" class="px-2 py-0.5 rounded text-[9px] font-bold transition-all border ${order.shippingStatus === 'DELIVERED' ? 'bg-green-500 text-white border-green-600' : 'bg-white/5 text-slate-500 border-white/10 hover:border-green-500/50'}">Entregado</button>
+                                </div>
+                            `}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                             <button onclick="viewOrderDetails(${order.id})" 
+                                     class="text-slate-500 hover:text-brand-accent transition-colors p-2 rounded-lg hover:bg-white/5 animate-pulse bg-brand-accent/5"
+                                     title="Ver detalles del pedido">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                             </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('orders-table').innerHTML = html || '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-500">No se encontraron pedidos con los filtros aplicados.</td></tr>';
+                document.getElementById('order-count').textContent = `${data.totalItems} PEDIDOS`;
+                
+                updatePagination(data.currentPage, data.totalPages, data.totalItems);
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('orders-table').innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-red-400">Error al conectar con la base de datos.</td></tr>';
+            }
+        }
+
+        function updatePagination(current, total, totalItems) {
+            const container = document.getElementById('pagination-controls');
+            const info = document.getElementById('pagination-info');
+            
+            info.textContent = `Página ${current + 1} de ${total} (${totalItems} pedidos totales)`;
+            
+            let html = '';
+            // Prev button
+            html += `<button onclick="loadOrders(${current - 1})" ${current === 0 ? 'disabled' : ''} class="px-3 py-1 rounded border border-white/10 text-[10px] font-bold uppercase disabled:opacity-30 hover:bg-white/5 transition">Anterior</button>`;
+            
+            // Numbers
+            for (let i = 0; i < total; i++) {
+                if (i === 0 || i === total - 1 || (i >= current - 1 && i <= current + 1)) {
+                    html += `<button onclick="loadOrders(${i})" class="px-3 py-1 rounded border ${current === i ? 'bg-brand-accent border-brand-accent text-white' : 'border-white/10 text-slate-400'} text-[10px] font-bold hover:bg-white/5 transition">${i + 1}</button>`;
+                } else if (i === current - 2 || i === current + 2) {
+                    html += `<span class="px-2 text-slate-600">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button onclick="loadOrders(${current + 1})" ${current >= total - 1 ? 'disabled' : ''} class="px-3 py-1 rounded border border-white/10 text-[10px] font-bold uppercase disabled:opacity-30 hover:bg-white/5 transition">Siguiente</button>`;
+            
+            container.innerHTML = html;
+        }
+
+        let searchTimeout;
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => loadOrders(0), 500);
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            loadOrders(0);
+        }
+
+        async function updateShipping(orderId, status) {
+            const token = localStorage.getItem('token');
+            const statusLabels = {
+                'SHIPPED': 'Enviado',
+                'IN_TRANSIT': 'En camino',
+                'DELIVERED': 'Entregado',
+                'AWAITING_PICKUP': 'Listo para recojo'
+            };
+            
+            if (!confirm(`¿Cambiar estado de envío a ${statusLabels[status] || status}?`)) return;
+            
+            try {
+                const response = await fetch(`/api/admin/orders/${orderId}/shipping-status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: status })
+                });
+                
+                if (response.ok) {
+                    loadOrders(currentPage);
+                } else {
+                    const err = await response.text();
+                    alert('Error al actualizar: ' + err);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión al servidor');
+            }
+        }
+
+        function viewOrderDetails(orderId) {
+            const order = ordersMap[orderId];
+            if (!order) return;
+
+            document.getElementById('modalName').textContent = `${order.customer?.firstName || ''} ${order.customer?.lastName || ''}`.trim() || 'N/A';
+            document.getElementById('modalCompany').textContent = order.customer?.company || 'No especificada';
+            document.getElementById('modalAddress').textContent = order.shippingAddress || 'No especificada';
+
+            // Billing info
+            const billingSection = document.getElementById('modalBillingSection');
+            const billingInfoEl = document.getElementById('modalBillingInfo');
+            const notes = order.notes || '';
+            if (notes.startsWith('BOLETA|')) {
+                const params = {};
+                notes.split('|').forEach(p => {
+                    const [k, ...v] = p.split(':');
+                    if (k && k !== 'BOLETA') params[k] = v.join(':');
+                });
+                billingInfoEl.innerHTML =
+                    `<span class="font-bold text-brand-accent">Boleta de Venta</span><br>` +
+                    `<span class="text-slate-300">DNI: ${params['DNI'] || 'No ingresado'}</span>`;
+                billingSection.classList.remove('hidden');
+            } else if (notes.startsWith('FACTURA|')) {
+                const params = {};
+                notes.split('|').forEach(p => {
+                    const [k, ...v] = p.split(':');
+                    if (k && k !== 'FACTURA') params[k] = v.join(':');
+                });
+                billingInfoEl.innerHTML =
+                    `<span class="font-bold text-brand-accent">Factura</span><br>` +
+                    `<span class="text-slate-300">RUC: ${params['RUC'] || 'No ingresado'}</span><br>` +
+                    `<span class="text-slate-300">Razón Social: ${params['RS'] || 'No ingresada'}</span><br>` +
+                    `<span class="text-slate-300">Dir. Fiscal: ${params['DIR'] || 'No ingresada'}</span>`;
+                billingSection.classList.remove('hidden');
+            } else {
+                billingSection.classList.add('hidden');
+            }
+
+            // Products
+            const products = order.orderDetails || [];
+            const productsHtml = products.length > 0
+                ? products.map(d => `
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-white">${d.productName} <span class="text-slate-500 text-xs">x${d.quantity}</span></span>
+                        <span class="text-slate-300 font-semibold">S/ ${parseFloat(d.subtotal).toFixed(2)}</span>
+                    </div>
+                `).join('')
+                : '<p class="text-slate-500 text-xs">Sin detalle de productos</p>';
+            document.getElementById('modalProducts').innerHTML = productsHtml;
+
+            document.getElementById('addressModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('addressModal').classList.add('hidden');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => loadOrders(0));
+    </script>
+</body>
+</html>

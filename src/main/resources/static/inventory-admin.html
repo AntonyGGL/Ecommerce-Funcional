@@ -1,0 +1,498 @@
+<!DOCTYPE htmsudo -u postgres psql -d impofer_dbrm -rf /home/impofer/demo
+rm -f /home/impofer/*.jar
+
+# Verifica qué queda
+ls -la /home/impofer/l>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario | Impofer Admin</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0f172a',
+                            dark: '#1e293b',
+                            card: '#1e293b',
+                            accent: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-brand-dark border-r border-white/5 hidden md:flex flex-col">
+        <div class="h-20 flex items-center px-6 border-b border-white/5 font-bold text-brand-accent tracking-tighter text-xl">
+            IMPOFER <span class="text-white ml-2 text-xs font-normal border border-white/20 px-1 rounded">ADMIN</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+            </a>
+            <a href="orders-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i> Pedidos
+            </a>
+            <a href="clients-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="users" class="w-5 h-5"></i> Clientes
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-accent/10 text-brand-accent rounded-lg transition-colors font-bold">
+                <i data-lucide="package" class="w-5 h-5"></i> Productos
+            </a>
+            <a href="reclamaciones-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="book-open" class="w-5 h-5"></i> Reclamaciones
+            </a>
+            <a href="cotizaciones-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors">
+                <i data-lucide="file-text" class="w-5 h-5"></i> Cotizaciones
+            </a>
+            <div class="pt-8 space-y-2">
+                 <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-400/10 w-full rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-5 h-5"></i> Cerrar Sesión
+                </button>
+                <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 rounded-lg transition-colors border border-white/5 mx-0">
+                    <i data-lucide="external-link" class="w-5 h-5"></i> Ir a la tienda
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="h-20 bg-brand-black/90 border-b border-white/5 flex justify-between items-center px-8">
+            <h1 class="text-xl font-bold">Inventario de Productos</h1>
+            <button onclick="openModal()" class="bg-brand-accent hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-transform active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Producto
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 bg-brand-black space-y-8">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-brand-card p-4 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Total</p>
+                    <h3 class="text-2xl font-bold text-white" id="total-products">--</h3>
+                </div>
+                <div class="bg-brand-card p-4 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Valor Stock</p>
+                    <h3 class="text-2xl font-bold text-green-500" id="total-value">--</h3>
+                </div>
+                <div id="card-low-stock" onclick="toggleStockFilter('low')" class="bg-brand-card p-4 rounded-xl border border-brand-accent/20 cursor-pointer hover:bg-brand-accent/10 transition-colors select-none">
+                    <p class="text-[10px] text-brand-accent uppercase font-bold tracking-widest mb-1">Bajo Stock</p>
+                    <h3 class="text-2xl font-bold text-brand-accent" id="low-stock">0</h3>
+                </div>
+                <div id="card-out-stock" onclick="toggleStockFilter('out')" class="bg-brand-card p-4 rounded-xl border border-red-500/20 cursor-pointer hover:bg-red-500/10 transition-colors select-none">
+                    <p class="text-[10px] text-red-500 uppercase font-bold tracking-widest mb-1">Agotados</p>
+                    <h3 class="text-2xl font-bold text-red-500" id="out-stock">0</h3>
+                </div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="bg-brand-card rounded-xl border border-white/5 p-4 flex flex-wrap gap-3 items-center">
+                <div class="relative flex-1 min-w-[220px]">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-500"></i>
+                    <input type="text" id="sku-search" oninput="applyFilters()" placeholder="Buscar por código SKU o nombre..." class="w-full bg-brand-black border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:border-brand-accent outline-none">
+                </div>
+                <div class="flex flex-wrap gap-2" id="category-filter-btns">
+                    <button data-cat="" onclick="setCategoryFilter('')" class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase border border-brand-accent bg-brand-accent/20 text-brand-accent transition-colors">Todos</button>
+                </div>
+            </div>
+            <p id="filter-label" class="hidden text-xs text-slate-400 -mt-4 px-1"></p>
+
+            <!-- Table Container -->
+            <div id="inventory-container" class="space-y-12">
+                <!-- Secciones de categorías cargadas por JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-brand-card w-full max-w-lg rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <h2 id="modal-title" class="text-xl font-bold">Agregar Nuevo Producto</h2>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <form id="productForm" class="p-6 space-y-4">
+                <input type="hidden" name="id" id="field-id">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase">Nombre</label>
+                    <input type="text" name="name" id="field-name" required class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase">Descripción</label>
+                    <textarea name="description" id="field-description" required rows="2" class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm"></textarea>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Precio ($)</label>
+                        <input type="number" step="0.01" name="price" id="field-price" required class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Stock Inicial</label>
+                        <input type="number" name="stock" id="field-stock" required class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Stock Mínimo</label>
+                        <input type="number" name="minStock" id="field-minStock" required class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm" value="5">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase">Categoría</label>
+                    <select id="category-select" name="categoryId" required class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm">
+                        <!-- Loaded from API -->
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase">URL Imagen (Opcional)</label>
+                    <input type="url" name="imageUrl" id="field-imageUrl" class="w-full bg-brand-black border border-white/10 rounded-lg px-4 py-2 focus:border-brand-accent outline-none text-white text-sm">
+                </div>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-bold transition-colors">Cancelar</button>
+                    <button type="submit" id="submit-btn" class="flex-2 px-8 py-3 bg-brand-accent hover:bg-orange-600 rounded-xl font-bold transition-colors">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function checkAdmin() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            if (!token || role !== 'ADMIN') window.location.href = 'login.html';
+        }
+        checkAdmin();
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function openModal() {
+            document.getElementById('productForm').reset();
+            document.getElementById('field-id').value = '';
+            document.getElementById('modal-title').textContent = 'Agregar Nuevo Producto';
+            document.getElementById('submit-btn').textContent = 'Guardar Producto';
+            document.getElementById('modal').classList.remove('hidden');
+            loadCategories();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        async function editProduct(id) {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`/api/products/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const product = await response.json();
+                
+                // Show modal and update titles
+                document.getElementById('modal').classList.remove('hidden');
+                document.getElementById('modal-title').textContent = 'Editar Producto';
+                document.getElementById('submit-btn').textContent = 'Actualizar Producto';
+                
+                // Load categories first so we can select the right one
+                await loadCategories();
+                
+                // Fill form
+                document.getElementById('field-id').value = product.id;
+                document.getElementById('field-name').value = product.name;
+                document.getElementById('field-description').value = product.description;
+                document.getElementById('field-price').value = product.price;
+                document.getElementById('field-stock').value = product.stock;
+                document.getElementById('field-minStock').value = product.minStock || 5;
+                document.getElementById('field-imageUrl').value = product.imageUrl || '';
+                document.getElementById('category-select').value = product.category ? product.category.id : '';
+                
+            } catch (error) {
+                console.error('Error fetching product:', error);
+                alert('No se pudo cargar la información del producto');
+            }
+        }
+
+        async function loadCategories() {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('/api/admin/categories', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const categories = await response.json();
+                const select = document.getElementById('category-select');
+                select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        let allProducts = [];
+        let activeCategoryFilter = '';
+        let activeStockFilter = ''; // 'low' | 'out' | ''
+
+        function setCategoryFilter(cat) {
+            activeCategoryFilter = cat;
+            activeStockFilter = '';
+            updateCategoryButtons();
+            updateStockCardStyles();
+            applyFilters();
+        }
+
+        function toggleStockFilter(type) {
+            activeStockFilter = (activeStockFilter === type) ? '' : type;
+            activeCategoryFilter = '';
+            updateCategoryButtons();
+            updateStockCardStyles();
+            applyFilters();
+        }
+
+        function updateCategoryButtons() {
+            document.querySelectorAll('#category-filter-btns button').forEach(btn => {
+                const isActive = (btn.dataset.cat === activeCategoryFilter) && !activeStockFilter;
+                btn.className = isActive
+                    ? 'px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase border border-brand-accent bg-brand-accent/20 text-brand-accent transition-colors'
+                    : 'px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase border border-white/10 text-slate-400 hover:bg-white/5 transition-colors';
+            });
+        }
+
+        function updateStockCardStyles() {
+            const lowCard = document.getElementById('card-low-stock');
+            const outCard = document.getElementById('card-out-stock');
+            lowCard.className = activeStockFilter === 'low'
+                ? 'bg-brand-accent/20 p-4 rounded-xl border border-brand-accent cursor-pointer transition-colors select-none'
+                : 'bg-brand-card p-4 rounded-xl border border-brand-accent/20 cursor-pointer hover:bg-brand-accent/10 transition-colors select-none';
+            outCard.className = activeStockFilter === 'out'
+                ? 'bg-red-500/20 p-4 rounded-xl border border-red-500 cursor-pointer transition-colors select-none'
+                : 'bg-brand-card p-4 rounded-xl border border-red-500/20 cursor-pointer hover:bg-red-500/10 transition-colors select-none';
+        }
+
+        function applyFilters() {
+            const skuQuery = document.getElementById('sku-search').value.trim().toLowerCase();
+            const filterLabel = document.getElementById('filter-label');
+
+            let filtered = allProducts.filter(p => {
+                const matchesCat = !activeCategoryFilter || (p.category && p.category.name === activeCategoryFilter);
+                const matchesSku = !skuQuery || (p.sku && p.sku.toLowerCase().includes(skuQuery)) || (p.name && p.name.toLowerCase().includes(skuQuery));
+                const minSt = p.minStock || 5;
+                const matchesStock = !activeStockFilter ||
+                    (activeStockFilter === 'low' && p.stock > 0 && p.stock <= minSt) ||
+                    (activeStockFilter === 'out' && p.stock === 0);
+                return matchesCat && matchesSku && matchesStock;
+            });
+
+            if (activeStockFilter === 'low') {
+                filterLabel.textContent = `Mostrando productos con BAJO STOCK (${filtered.length} resultado${filtered.length !== 1 ? 's' : ''})`;
+                filterLabel.className = 'text-xs text-brand-accent -mt-4 px-1';
+            } else if (activeStockFilter === 'out') {
+                filterLabel.textContent = `Mostrando productos AGOTADOS (${filtered.length} resultado${filtered.length !== 1 ? 's' : ''})`;
+                filterLabel.className = 'text-xs text-red-400 -mt-4 px-1';
+            } else if (activeCategoryFilter) {
+                filterLabel.textContent = `Categoría: ${activeCategoryFilter} — ${filtered.length} producto${filtered.length !== 1 ? 's' : ''}`;
+                filterLabel.className = 'text-xs text-slate-400 -mt-4 px-1';
+            } else if (skuQuery) {
+                filterLabel.textContent = `Búsqueda: "${skuQuery}" — ${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
+                filterLabel.className = 'text-xs text-slate-400 -mt-4 px-1';
+            } else {
+                filterLabel.className = 'hidden text-xs text-slate-400 -mt-4 px-1';
+            }
+
+            renderInventory(filtered);
+        }
+
+        function renderInventory(products) {
+            const groups = products.reduce((acc, p) => {
+                const catName = p.category ? p.category.name : 'Varios';
+                if (!acc[catName]) acc[catName] = [];
+                acc[catName].push(p);
+                return acc;
+            }, {});
+
+            let containerHtml = '';
+
+            if (products.length === 0) {
+                containerHtml = `<div class="text-center py-16 text-slate-500">
+                    <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-3 opacity-30"></i>
+                    <p class="font-bold">No se encontraron productos con los filtros aplicados.</p>
+                </div>`;
+            } else {
+                for (const [category, categoryProducts] of Object.entries(groups)) {
+                    containerHtml += `
+                        <div class="space-y-4">
+                            <h2 class="text-lg font-bold text-brand-accent flex items-center gap-2">
+                                <i data-lucide="tag" class="w-5 h-5"></i> ${category}
+                                <span class="bg-white/5 text-slate-400 text-[10px] px-2 py-0.5 rounded-full font-normal">${categoryProducts.length} items</span>
+                            </h2>
+                            <div class="bg-brand-card rounded-xl border border-white/5 overflow-hidden shadow-xl">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm text-slate-400">
+                                        <thead class="bg-white/5 text-[10px] uppercase font-bold text-slate-500 border-b border-white/5">
+                                            <tr>
+                                                <th class="px-6 py-4">Producto</th>
+                                                <th class="px-6 py-4">Precio</th>
+                                                <th class="px-6 py-4">Stock</th>
+                                                <th class="px-6 py-4 text-right">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-white/5">
+                                            ${categoryProducts.map(product => {
+                                                const minSt = product.minStock || 5;
+                                                const isLow = product.stock > 0 && product.stock <= minSt;
+                                                const isOut = product.stock === 0;
+                                                const stockColor = isOut ? 'text-red-400' : isLow ? 'text-brand-accent' : 'text-slate-300';
+                                                const barColor = isOut ? 'bg-red-500' : isLow ? 'bg-brand-accent' : 'bg-green-500';
+                                                const badge = isOut
+                                                    ? '<span class="ml-2 px-1.5 py-0.5 bg-red-500/10 text-red-400 text-[9px] font-bold uppercase rounded border border-red-500/20">Agotado</span>'
+                                                    : isLow
+                                                    ? '<span class="ml-2 px-1.5 py-0.5 bg-brand-accent/10 text-brand-accent text-[9px] font-bold uppercase rounded border border-brand-accent/20">Bajo Stock</span>'
+                                                    : '';
+                                                return `
+                                                <tr class="hover:bg-white/5 transition-colors group">
+                                                    <td class="px-6 py-4">
+                                                        <div class="flex items-center gap-4">
+                                                            <img src="${product.imageUrl || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-lg object-cover bg-white/5">
+                                                            <div>
+                                                                <div class="font-bold text-white">${product.name}</div>
+                                                                <div class="text-[10px] text-slate-500 uppercase tracking-widest">${product.sku}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4 font-bold text-white">$${product.price}</td>
+                                                    <td class="px-6 py-4">
+                                                        <div class="flex items-center gap-2 flex-wrap">
+                                                            <span class="font-medium ${stockColor}">${product.stock}</span>
+                                                            <div class="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
+                                                                <div class="h-full ${barColor}" style="width: ${Math.min(product.stock * 5, 100)}%"></div>
+                                                            </div>
+                                                            ${badge}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-right">
+                                                        <div class="flex justify-end gap-2">
+                                                            <button onclick="editProduct(${product.id})" class="text-slate-500 hover:text-brand-accent transition-colors p-2 hover:bg-brand-accent/10 rounded-lg" title="Editar">
+                                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                                            </button>
+                                                            <button onclick="deleteProduct(${product.id})" class="text-slate-500 hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-lg" title="Eliminar">
+                                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                `;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('inventory-container').innerHTML = containerHtml;
+            lucide.createIcons();
+        }
+
+        async function loadInventory() {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('/api/products', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                allProducts = await response.json();
+
+                // Update stats
+                document.getElementById('total-products').textContent = allProducts.length;
+                const totalValue = allProducts.reduce((sum, p) => sum + (p.price * p.stock), 0);
+                document.getElementById('total-value').textContent = `$${totalValue.toLocaleString('es-ES')}`;
+                document.getElementById('low-stock').textContent = allProducts.filter(p => p.stock > 0 && p.stock <= (p.minStock || 5)).length;
+                document.getElementById('out-stock').textContent = allProducts.filter(p => p.stock === 0).length;
+
+                // Build category filter buttons from actual data
+                const categories = [...new Set(allProducts.map(p => p.category ? p.category.name : 'Varios'))].sort();
+                const btnContainer = document.getElementById('category-filter-btns');
+                btnContainer.innerHTML = `<button data-cat="" onclick="setCategoryFilter('')" class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase border border-brand-accent bg-brand-accent/20 text-brand-accent transition-colors">Todos</button>`
+                    + categories.map(cat => `<button data-cat="${cat}" onclick="setCategoryFilter('${cat}')" class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase border border-white/10 text-slate-400 hover:bg-white/5 transition-colors">${cat}</button>`).join('');
+
+                renderInventory(allProducts);
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd);
+            
+            const productId = data.id;
+            const isEdit = productId && productId !== '';
+
+            // Map flat data to nested category object
+            const product = {
+                name: data.name,
+                description: data.description,
+                price: parseFloat(data.price),
+                stock: parseInt(data.stock),
+                minStock: parseInt(data.minStock) || 5,
+                imageUrl: data.imageUrl,
+                category: { id: parseInt(data.categoryId) }
+            };
+
+            const url = isEdit ? `/api/products/${productId}` : '/api/products';
+            const method = isEdit ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                if (response.ok) {
+                    closeModal();
+                    loadInventory();
+                    e.target.reset();
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + (err.message || 'No se pudo procesar la solicitud'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        async function deleteProduct(id) {
+            if (!confirm('¿Seguro que deseas eliminar este producto?')) return;
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`/api/products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) loadInventory();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadInventory);
+    </script>
+</body>
+</html>

@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizar Pedido | Impofer</title>
+    <link rel="icon" type="image/png" href="/Impofer.png">
+    <script src="js/tailwind.min.js"></script>
+    <script src="js/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { black: '#0f172a', dark: '#1e293b', accent: '#f97316', light: '#94a3b8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .input-dark {
+            background-color: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 12px 16px; border-radius: 8px; width: 100%; outline: none; transition: all 0.3s;
+        }
+        .input-dark:focus { border-color: #f97316; box-shadow: 0 0 0 1px #f97316; }
+        .input-dark::placeholder { color: #64748b; }
+        .whatsapp-btn { background: linear-gradient(135deg, #25d366, #128c7e); transition: all 0.3s; }
+        .whatsapp-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .whatsapp-btn:disabled { opacity: 0.5; filter: none; transform: none; cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-brand-black text-white antialiased font-sans">
+
+    <header class="border-b border-white/5 bg-brand-black/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <i data-lucide="hexagon" class="text-brand-accent h-7 w-7 fill-brand-accent/20"></i>
+                <span class="font-bold text-xl tracking-tight">IMPOFER<span class="text-brand-accent">.</span></span>
+            </a>
+            <a href="catalog.html" class="flex items-center gap-1 text-sm text-slate-400 hover:text-white transition">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver al cat&aacute;logo
+            </a>
+        </div>
+    </header>
+
+    <div class="bg-gradient-to-r from-green-900/40 to-brand-dark border-b border-green-500/20">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+            <i data-lucide="message-circle" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
+            <p class="text-sm text-green-300">
+                <span class="font-bold">&iquest;C&oacute;mo funciona?</span>
+                Revisa tu carrito, elige el m&eacute;todo de entrega y cont&aacute;ctanos por WhatsApp.
+                Un asesor confirmar&aacute; disponibilidad, tiempo de entrega y coordinar&aacute; el pago contigo.
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-10">
+        <div class="flex flex-col lg:flex-row gap-12">
+
+            <div class="w-full lg:w-2/3 space-y-8">
+
+                <!-- Paso 1 -->
+                <section>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-brand-accent text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                        <h2 class="text-xl font-bold">Revisi&oacute;n del Pedido</h2>
+                    </div>
+                    <div id="cart-items" class="bg-brand-dark rounded-xl border border-white/5 p-6 space-y-5">
+                        <p class="text-slate-400 text-center py-6">Cargando carrito...</p>
+                    </div>
+                </section>
+
+                <!-- Paso 2 -->
+                <section>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-brand-accent text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                        <h2 class="text-xl font-bold">M&eacute;todo de Entrega</h2>
+                    </div>
+                    <div class="bg-brand-dark rounded-xl border border-white/5 p-6 mb-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition">
+                                <input type="radio" name="deliveryMethod" value="shipping" checked onchange="toggleDelivery(this.value)" class="w-4 h-4 accent-orange-500">
+                                <div>
+                                    <p class="font-bold text-sm">Env&iacute;o a domicilio</p>
+                                    <p class="text-[11px] text-slate-400">Gratis desde S/ 400.00</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition">
+                                <input type="radio" name="deliveryMethod" value="pickup" onchange="toggleDelivery(this.value)" class="w-4 h-4 accent-orange-500">
+                                <div>
+                                    <p class="font-bold text-sm">Recojo en tienda</p>
+                                    <p class="text-[11px] text-slate-400">Sin costo adicional</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="shipping-form" class="bg-brand-dark rounded-xl border border-white/5 p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Direcci&oacute;n de entrega</label>
+                            <input type="text" id="address" class="input-dark mt-1" placeholder="Ej: Av. Grau 123, Huancayo">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Ciudad / Distrito</label>
+                            <input type="text" id="city" class="input-dark mt-1" placeholder="Ej: El Tambo">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Referencia</label>
+                            <input type="text" id="ref" class="input-dark mt-1" placeholder="Ej: Cerca al mercado central">
+                        </div>
+                    </div>
+                    <div id="pickup-info" class="hidden bg-brand-dark rounded-xl border border-brand-accent/30 p-6 flex items-center gap-4">
+                        <div class="bg-brand-accent/10 p-3 rounded-lg text-brand-accent flex-shrink-0">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white">Nuestra Tienda Principal</p>
+                            <p class="text-sm text-slate-400">Atahualpa 436A, Huancayo 12001</p>
+                            <p class="text-xs text-slate-500 mt-1">Lun&ndash;S&aacute;b: 8am&ndash;7pm &middot; Dom: 9am&ndash;1pm</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Paso 3 -->
+                <section>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-brand-accent text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                        <h2 class="text-xl font-bold">Comprobante de Pago</h2>
+                    </div>
+                    <div class="bg-brand-dark rounded-xl border border-white/5 p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition">
+                                <input type="radio" name="billingType" value="boleta" checked onchange="toggleBilling(this.value)" class="w-4 h-4 accent-orange-500">
+                                <div>
+                                    <p class="font-bold text-sm">Boleta</p>
+                                    <p class="text-[11px] text-slate-400">Persona natural / DNI</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition">
+                                <input type="radio" name="billingType" value="factura" onchange="toggleBilling(this.value)" class="w-4 h-4 accent-orange-500">
+                                <div>
+                                    <p class="font-bold text-sm">Factura</p>
+                                    <p class="text-[11px] text-slate-400">Empresa / RUC</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div id="billing-boleta">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">DNI</label>
+                            <input type="text" id="billing-dni" maxlength="8" inputmode="numeric" class="input-dark mt-1" placeholder="N&uacute;mero de DNI (8 d&iacute;gitos)">
+                        </div>
+                        <div id="billing-factura" class="hidden space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">RUC de la Empresa</label>
+                                <input type="text" id="billing-ruc" maxlength="11" inputmode="numeric" class="input-dark mt-1" placeholder="N&uacute;mero de RUC (11 d&iacute;gitos)">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Raz&oacute;n Social</label>
+                                <input type="text" id="billing-razon" class="input-dark mt-1" placeholder="Nombre o raz&oacute;n social de la empresa">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Direcci&oacute;n Fiscal de la Empresa</label>
+                                <input type="text" id="billing-dir-fiscal" class="input-dark mt-1" placeholder="Ej: Av. Industrial 405, Lima">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Paso 4 -->
+                <section>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-green-500 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                        <h2 class="text-xl font-bold">Enviar Cotizaci&oacute;n por WhatsApp</h2>
+                    </div>
+                    <div class="bg-brand-dark rounded-xl border border-green-500/20 p-6 space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-green-500/10 p-3 rounded-xl flex-shrink-0">
+                                <svg class="w-7 h-7 fill-green-400" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white mb-2">&iquest;C&oacute;mo funciona?</p>
+                                <ul class="text-sm text-slate-400 space-y-2">
+                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400 flex-shrink-0"></i> Al hacer clic se abrir&aacute; WhatsApp con tu lista de productos ya redactada.</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400 flex-shrink-0"></i> Un asesor de Impofer te responder&aacute; y confirmar&aacute; precios y disponibilidad.</li>
+                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-400 flex-shrink-0"></i> Coordinar&aacute;s el m&eacute;todo de pago (transferencia, Yape, efectivo) directamente con nosotros.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="whatsapp-error" class="hidden bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 text-red-400 text-sm"></div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Sidebar derecho -->
+            <div class="w-full lg:w-1/3">
+                <div class="sticky top-24 space-y-4">
+                    <div class="bg-brand-dark rounded-xl border border-white/5 p-6">
+                        <h3 class="font-bold text-lg text-white mb-5 flex items-center gap-2">
+                            <i data-lucide="receipt" class="w-5 h-5 text-brand-accent"></i> Resumen de Cotizaci&oacute;n
+                        </h3>
+                        <div class="space-y-2 text-sm pb-5 border-b border-white/5" id="summary-items"></div>
+                        <div class="space-y-2 text-sm py-5 border-b border-white/5">
+                            <div class="flex justify-between text-slate-300">
+                                <span>Subtotal</span>
+                                <span id="subtotal">S/ 0.00</span>
+                            </div>
+                            <div id="shipping-line" class="flex justify-between text-slate-300">
+                                <span>Env&iacute;o estimado</span>
+                                <span id="shipping-cost" class="text-green-400 font-semibold">Gratis</span>
+                            </div>
+                        </div>
+                        <div class="pt-5 flex justify-between items-end">
+                            <span class="text-slate-400 font-semibold">Total estimado</span>
+                            <span class="text-3xl font-extrabold text-brand-accent" id="total">S/ 0.00</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-2">* El asesor confirmar&aacute; el precio y env&iacute;o finales.</p>
+                    </div>
+
+                    <button id="whatsappBtn" onclick="sendToWhatsApp()"
+                        class="whatsapp-btn w-full text-white py-4 rounded-xl font-bold text-base shadow-lg shadow-green-900/40 flex items-center justify-center gap-3" disabled>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        Enviar por WhatsApp
+                    </button>
+
+                    <div class="bg-brand-dark rounded-xl border border-white/5 p-4 space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">M&eacute;todos de pago aceptados</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+                                <i data-lucide="banknote" class="w-4 h-4 text-brand-accent flex-shrink-0"></i>
+                                <span class="text-xs">Efectivo</span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+                                <i data-lucide="smartphone" class="w-4 h-4 text-brand-accent flex-shrink-0"></i>
+                                <span class="text-xs">Yape / Plin</span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+                                <i data-lucide="landmark" class="w-4 h-4 text-brand-accent flex-shrink-0"></i>
+                                <span class="text-xs">Transferencia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        var WA_NUMBER = '51912112268';
+        var deliveryMethod = 'shipping';
+        var cartData = [];
+
+        function toggleDelivery(val) {
+            deliveryMethod = val;
+            document.getElementById('shipping-form').classList.toggle('hidden', val !== 'shipping');
+            document.getElementById('pickup-info').classList.toggle('hidden', val !== 'pickup');
+            document.getElementById('shipping-line').classList.toggle('hidden', val !== 'shipping');
+            refreshSummary();
+        }
+
+        function toggleBilling(val) {
+            document.getElementById('billing-boleta').classList.toggle('hidden', val !== 'boleta');
+            document.getElementById('billing-factura').classList.toggle('hidden', val !== 'factura');
+        }
+
+        function removeItem(index) {
+            cartData.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cartData));
+            renderCart();
+        }
+
+        function changeQty(index, delta) {
+            cartData[index].quantity = Math.max(1, (cartData[index].quantity || 1) + delta);
+            localStorage.setItem('cart', JSON.stringify(cartData));
+            renderCart();
+        }
+
+        function esc(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function renderCart() {
+            var container = document.getElementById('cart-items');
+            var summaryEl = document.getElementById('summary-items');
+
+            if (!cartData.length) {
+                container.innerHTML =
+                    '<div class="text-center py-10 text-slate-500">' +
+                    '<i data-lucide="package-open" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>' +
+                    '<p>Tu carrito est&aacute; vac&iacute;o.</p>' +
+                    '<a href="catalog.html" class="text-brand-accent hover:underline text-sm mt-2 inline-block">Ir al cat&aacute;logo</a>' +
+                    '</div>';
+                summaryEl.innerHTML = '<p class="text-slate-500 text-center py-2">Sin productos</p>';
+                document.getElementById('whatsappBtn').disabled = true;
+                lucide.createIcons();
+                refreshSummary();
+                return;
+            }
+
+            container.innerHTML = cartData.map(function(item, i) {
+                var sep = i < cartData.length - 1 ? ' border-b border-white/5' : '';
+                return '<div class="flex gap-4 items-center pb-5' + sep + '">' +
+                    '<div class="w-20 h-20 bg-white/5 rounded-lg overflow-hidden flex-shrink-0">' +
+                    '<img src="' + esc(item.imageUrl || '') + '" alt="' + esc(item.name) + '" class="w-full h-full object-cover" ' +
+                    'onerror="this.src=\'data:image/svg+xml,<svg xmlns=\\%22http://www.w3.org/2000/svg\\%22 width=\\%2280\\%22 height=\\%2280\\%22><rect width=\\%2280\\%22 height=\\%2280\\%22 fill=\\%22%231e293b\\%22/></svg>\'">' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                    '<h3 class="font-bold text-white text-sm leading-snug mb-1">' + esc(item.name) + '</h3>' +
+                    '<div class="flex items-center gap-2 mt-2">' +
+                    '<button onclick="changeQty(' + i + ',-1)" class="w-6 h-6 rounded bg-white/5 hover:bg-white/10 transition text-xs font-bold flex items-center justify-center">&minus;</button>' +
+                    '<span class="text-sm font-bold w-6 text-center">' + item.quantity + '</span>' +
+                    '<button onclick="changeQty(' + i + ',1)" class="w-6 h-6 rounded bg-white/5 hover:bg-white/10 transition text-xs font-bold flex items-center justify-center">+</button>' +
+                    '<button onclick="removeItem(' + i + ')" class="ml-2 text-xs text-slate-500 hover:text-red-400 transition">Eliminar</button>' +
+                    '</div></div>' +
+                    '<div class="text-right flex-shrink-0">' +
+                    '<p class="font-extrabold text-white">S/ ' + (item.price * item.quantity).toFixed(2) + '</p>' +
+                    '<p class="text-xs text-slate-500">S/ ' + parseFloat(item.price).toFixed(2) + ' c/u</p>' +
+                    '</div></div>';
+            }).join('');
+
+            summaryEl.innerHTML = cartData.map(function(item) {
+                return '<div class="flex justify-between text-slate-300">' +
+                    '<span class="truncate mr-2">' + esc(item.name) + ' &times;' + item.quantity + '</span>' +
+                    '<span class="font-semibold flex-shrink-0">S/ ' + (item.price * item.quantity).toFixed(2) + '</span></div>';
+            }).join('');
+
+            document.getElementById('whatsappBtn').disabled = false;
+            lucide.createIcons();
+            refreshSummary();
+        }
+
+        function refreshSummary() {
+            var sub = cartData.reduce(function(s, i) { return s + i.price * i.quantity; }, 0);
+            var ship = (deliveryMethod === 'shipping' && sub > 0 && sub < 400) ? Math.round(sub * 0.18 * 100) / 100 : 0;
+            document.getElementById('subtotal').textContent = 'S/ ' + sub.toFixed(2);
+            var el = document.getElementById('shipping-cost');
+            if (ship > 0) { el.textContent = 'S/ ' + ship.toFixed(2); el.className = 'text-white font-semibold'; }
+            else          { el.textContent = 'Gratis';               el.className = 'text-green-400 font-semibold'; }
+            document.getElementById('total').textContent = 'S/ ' + (sub + ship).toFixed(2);
+        }
+
+        async function sendToWhatsApp() {
+            var errEl = document.getElementById('whatsapp-error');
+            errEl.classList.add('hidden');
+            if (!cartData.length) { showError('Tu carrito esta vacio. Agrega productos antes de cotizar.'); return; }
+
+            var token  = localStorage.getItem('token');
+            var userId = localStorage.getItem('userId');
+            var userIdNum = parseInt(userId, 10);
+            if (!token || !userId || isNaN(userIdNum)) {
+                window.location.href = 'login.html?redirect=checkout.html';
+                return;
+            }
+
+            var sub  = cartData.reduce(function(s, i) { return s + i.price * i.quantity; }, 0);
+            var ship = (deliveryMethod === 'shipping' && sub < 400) ? Math.round(sub * 0.18 * 100) / 100 : 0;
+            var total = sub + ship;
+
+            var addr = '';
+            if (deliveryMethod === 'shipping') {
+                var addrVal = document.getElementById('address').value.trim();
+                var cityVal = document.getElementById('city').value.trim();
+                var refVal  = document.getElementById('ref').value.trim();
+                addr = addrVal + (cityVal ? ', ' + cityVal : '') + (refVal ? ' - Ref: ' + refVal : '');
+            }
+            var billingVal = (document.querySelector('input[name="billingType"]:checked') || {value:'boleta'}).value;
+            var billingNote = '';
+            var notesForServer = '';
+            if (billingVal === 'boleta') {
+                var dni = document.getElementById('billing-dni').value.trim();
+                billingNote = 'Boleta' + (dni ? ' - DNI: ' + dni : '');
+                notesForServer = 'BOLETA|DNI:' + (dni || '');
+            } else {
+                var ruc      = document.getElementById('billing-ruc').value.trim();
+                var razon    = document.getElementById('billing-razon').value.trim();
+                var dirFiscal = document.getElementById('billing-dir-fiscal').value.trim();
+                billingNote = 'Factura' + (ruc ? ' - RUC: ' + ruc : '') + (razon ? ' - ' + razon : '') + (dirFiscal ? ' - Dir. Fiscal: ' + dirFiscal : '');
+                notesForServer = 'FACTURA|RUC:' + (ruc || '') + '|RS:' + (razon || '') + '|DIR:' + (dirFiscal || '');
+            }
+            var notes = notesForServer;
+
+            var items = cartData.map(function(item) {
+                var pid = item.productId != null ? item.productId : item.id;
+                return { productId: pid, productName: item.name, quantity: item.quantity, unitPrice: parseFloat(item.price) };
+            });
+            console.log('DEBUG cartData:', JSON.stringify(cartData));
+            console.log('DEBUG items a enviar:', JSON.stringify(items));
+            if (items.some(function(i) { return !i.productId || isNaN(i.unitPrice); })) {
+                showError('Error en los datos del carrito. Por favor vacía el carrito (bórralo desde el catálogo) y vuelve a agregar los productos.');
+                return;
+            }
+
+            var btn = document.getElementById('whatsappBtn');
+            var originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.textContent = 'Registrando cotización...';
+
+            try {
+                var response = await fetch('/api/orders/cotizacion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({
+                        userId: userIdNum,
+                        items: items,
+                        shippingAddress: addr || (deliveryMethod === 'pickup' ? 'Recojo en tienda' : ''),
+                        shippingCost: ship,
+                        notes: notes
+                    })
+                });
+                var data = await response.json();
+                if (!response.ok) { throw new Error(data.error || 'Error al registrar la cotización'); }
+
+                var code = data.cotizacionCode || ('#ORD-' + data.id);
+                var lines = ['Hola Impofer, quiero cotizar el siguiente pedido:', ''];
+                lines.push('📋 N° de Cotización: ' + code);
+                lines.push('');
+                cartData.forEach(function(item, i) {
+                    lines.push((i+1) + '. ' + item.name);
+                    lines.push('   Cant: ' + item.quantity + '  |  P.U.: S/ ' + parseFloat(item.price).toFixed(2) + '  |  Total: S/ ' + (item.price * item.quantity).toFixed(2));
+                });
+                lines.push('');
+                lines.push('Subtotal: S/ ' + sub.toFixed(2));
+                if (ship > 0) lines.push('Envio estimado: S/ ' + ship.toFixed(2));
+                lines.push('TOTAL ESTIMADO: S/ ' + total.toFixed(2));
+                lines.push('');
+                lines.push('Entrega: ' + (deliveryMethod === 'pickup' ? 'Recojo en tienda' : 'Envio a domicilio'));
+                if (deliveryMethod === 'shipping' && addr) lines.push('Direccion: ' + addr);
+                lines.push('Comprobante: ' + billingNote);
+                if (billingVal === 'factura') {
+                    var dirF = document.getElementById('billing-dir-fiscal').value.trim();
+                    if (dirF) lines.push('Dir. Fiscal: ' + dirF);
+                }
+                lines.push('');
+                lines.push('Por favor confirmarme disponibilidad y forma de pago. Gracias!');
+
+                window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener,noreferrer');
+            } catch(e) {
+                showError('Error: ' + e.message + '. Por favor intenta nuevamente.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function showError(msg) {
+            var el = document.getElementById('whatsapp-error');
+            el.textContent = msg; el.classList.remove('hidden');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            cartData = JSON.parse(localStorage.getItem('cart') || '[]');
+            renderCart();
+        });
+    </script>
+</body>
+</html>
