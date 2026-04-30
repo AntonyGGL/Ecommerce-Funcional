@@ -95,16 +95,6 @@ http://localhost:8080
 
 ---
 
-## 🔒 Consideraciones de Seguridad
-
-> ⚠️ **Importante:** No incluir credenciales reales en este repositorio.
-
-- Utilizar variables de entorno o un gestor de secretos para credenciales de base de datos, JWT, SMTP y pagos.
-- Los valores en `.env.example` son únicamente de referencia y no contienen datos reales.
-- Las claves sensibles deben inyectarse en tiempo de despliegue.
-
----
-
 ## 🐳 Despliegue con Docker
 
 El repositorio incluye todos los artefactos necesarios para despliegue en contenedores:
